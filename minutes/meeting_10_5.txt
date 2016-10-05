@@ -16,3 +16,6 @@ Discussion:
 the project would focus on the remote and local use case, and not consider the 
 security of the users file system. The idea of a "file safe" would not be included
 in the project.
+
+    We then met and discussed communication channels and work flow control. 
+We decided to use Slack and Github/Zenhub respectively.
