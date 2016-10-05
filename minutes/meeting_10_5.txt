@@ -1,0 +1,18 @@
+Meeting
+October 5, 2015
+
+Present:
+    Cameron
+    Quentin
+    Colin
+    Mark
+    Levi
+
+Description:
+    Meeting with Professor Cohen
+
+Discussion:
+    The feasability and scope of the project was discussed. It was decided that
+the project would focus on the remote and local use case, and not consider the 
+security of the users file system. The idea of a "file safe" would not be included
+in the project.
