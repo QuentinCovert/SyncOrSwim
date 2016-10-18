@@ -1,0 +1,20 @@
+Meeting
+October 17, 2016
+
+Present:
+    Cameron
+    Collin
+    Mark
+    Levi
+
+Description:
+    Team meeting in Love library study over. Discussed finished diagrams and
+began process of designing further diagrams.
+
+Duration - 2 hours
+
+Discussion:
+- Went over each section of specification document
+- Began to brainstorm design parameters
+- Discussed changes to finished class diagram
+- Began conversation about sequence diagrams
