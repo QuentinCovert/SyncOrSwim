@@ -23,8 +23,8 @@ TODO: Write history
 * Levi Amen
 * Cameron Johnson
 * Quentin Covert
-* Collin
-* Mark
+* Collin Victor
+* Mark Hernandez
 ## License
 This is an open source project under GPL.
 ]]></content>
