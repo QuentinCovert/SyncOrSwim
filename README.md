@@ -1,6 +1,6 @@
 <snippet>
   <content><![CDATA[
-# ${1:Project Name}
+# SyncOrSwim
 A simple, fast, and secure file syncing application. SyncOrSwim seeks to solve a number of problems in existing file syncing applications.
 Namely, lack of support for end-to-end encryption controlled locally by the user, and lack of control of where the file is placed remotely.
 ## ZenHub
@@ -23,8 +23,8 @@ TODO: Write history
 * Levi Amen
 * Cameron Johnson
 * Quentin Covert
-* Collin
-* Mark
+* Collin Victor
+* Mark Hernandez
 ## License
 This is an open source project under GPL.
 ]]></content>
