@@ -1,0 +1,22 @@
+Meeting
+October 20, 2016
+
+Present:
+    Cameron
+    Collin
+    Levi    
+    Quentin
+    
+
+Description:
+    Team meeting over Slack and Google Drive. Discussed specification and phase II report documents as well as the specific requirements both functional and nonfunctional for the project.
+
+Duration - 2 hours
+
+Discussion:
+- Edited phase specification document
+- Discussed changes and additions to specifications
+- Discussed requirements for the project as well as constraints, assumptions, and dependencies
+- Assigned Quentin to write phase II report
+- Discussed what to include in phase II report
+- Completed or nearly completed all documents for phase II
