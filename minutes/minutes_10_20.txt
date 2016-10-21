@@ -9,9 +9,9 @@ Present:
     
 
 Description:
-    Team meeting over Slack and Google Drive. Discussed specification and phase II report documents as well as the specific requirements both functional and nonfunctional for the project.
+    Virtual team meeting over Slack and Google Drive. Discussed specification and phase II report documents as well as the specific requirements both functional and nonfunctional for the project.
 
-Duration - 2 hours
+Duration: 2 hours
 
 Discussion:
 - Edited phase specification document

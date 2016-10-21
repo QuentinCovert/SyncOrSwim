@@ -9,7 +9,9 @@ Present:
     Levi
 
 Description:
-    Meeting with Professor Cohen
+    Meeting with Professor Cohen and additional team meeting afterwards
+
+Duration: 1 hour
 
 Discussion:
     The feasability and scope of the project was discussed. It was decided that

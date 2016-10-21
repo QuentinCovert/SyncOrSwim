@@ -9,9 +9,9 @@ Present:
     Levi
 
 Description:
-    Team meeting over slack and Google Hangouts
+    Virtual team meeting over slack and Google Hangouts
 
-Duration - 60 minutes
+Duration: 60 minutes
 
 Discussion
 - Tested Feasability of github.

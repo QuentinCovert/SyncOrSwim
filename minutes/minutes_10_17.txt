@@ -8,10 +8,10 @@ Present:
     Levi
 
 Description:
-    Team meeting in Love library study over. Discussed finished diagrams and
+    Team meeting in Love library study room. Discussed finished diagrams and
 began process of designing further diagrams.
 
-Duration - 2 hours
+Duration: 2 hours
 
 Discussion:
 - Went over each section of specification document

@@ -11,5 +11,7 @@ Present:
 Description:
 	Meeting in Learning Commons
 
+Duration: 1 hour
+
 Discussion:
     The use cases and functionality of project were discussed. Several normal use cases were developed and the main processes of the project were decided. An occular (vision) statement was also created, which defines the scope of the project.

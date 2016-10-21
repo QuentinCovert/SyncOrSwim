@@ -11,5 +11,7 @@ Present:
 Description:
 	Meeting in Learning Commons
 
+Duration: 1 hour
+
 Discussion:
     The use cases and functionality of project were discussed. Several alternative use cases were created. Extra functionality was discussed and the occular (vision) statement was revised to include this extra functionality. Since this meeting however, this extra functionality has been declared outside the scope of the current project.
