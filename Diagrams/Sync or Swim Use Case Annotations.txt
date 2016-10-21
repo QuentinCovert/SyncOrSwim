@@ -1,0 +1,16 @@
+Normal
+	File Syncing
+		Sync my files between local machine and server - Standard primary functionality of system. Takes a set of files, that is set to be encrypted by default, and syncs them between the remote server, Watchman and the local machine.
+		Set files to be ignored in sync - Keeps files from being added to set of synced files. Connected to sync files because it affects the set of files that are synces
+		Remove file from sync - Self explanatory. Connected to sync files because it affects the set of files that are synced.
+	Non Syncing
+		Generate crypto key - Create a cryptography key for use with a particular file set
+		Set crypto key - Provide the cryptography key use with a particular file set; connected to Generate key because when you generate a key it is set as the key for the set of files related to the key
+		Specify folders to watch - Add files to Watchman's set of watched files
+Alternate
+	Sync file without encrypting - Sets a file in the sync file set to not be encrypted when syncing occurs.
+	Invalid crypto key - Key can not possibly used in encryption or decryption (Invalid format, invalid characters, etc.)
+	Decrypt a file - Use a key to decrypt a file/file set; this is alternative because it must be done without syncing.
+	Encrypt a file - Use a key to encrypt a file/file set; this is alternative because it must be done without syncing.
+Exceptional
+	Local Machine shuts down unexpectedly - Server-side file integrety must be maintainable despite the possibility of power failure.
