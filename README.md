@@ -1,4 +1,5 @@
-![SyncOrSwimLogo](source/logo/syncOrSwimLogo.png)
+<img src="source/logo/syncOrSwimLogo.png" width="200px" height="200px" alt="SyncOrSwimLogo" />
+
 # SyncOrSwim
 A simple, fast, and secure file syncing application. SyncOrSwim seeks to solve a number of problems in existing file syncing applications: the lack of support for end-to-end encryption controlled locally by the user and the lack of control of where the file is placed remotely.
 
