@@ -1,0 +1,31 @@
+Meeting
+November 01, 2016
+
+Present:
+    Cameron
+    Quentin
+    Collin
+    Mark
+    Levi
+
+Description:
+    Virtual team meeting over Slack and Google Hangouts. Primarily discussed the portions of the program and delegated the tasks.
+
+Duration: 1 hour
+
+Discussion:
+- Discussed the environment for the program on the CSE computers:
+  + Currently, running Python 3.4, but we require 3.5. May be updated soon, according to Dr. Cohen.
+  + Watchman is able to run on the Linux systems. It is questionable if it is as capable on Windows. Will see later.
+- Discussed briefly about the implementation possible with SQL Alchemy in the file classes.
+- Re-affirmed the decision to keep Filesystem and Database as separate modules.
+- Organized major portions of the program into "epics"
+  + 5 of 6 epics each assigned to a specific team member
+    1. Crypto - Cameron
+    2. Filesystem - Quentin
+    3. Database - Collin
+    4. Watchman Interface - Mark
+    5. GUI - Levi
+    6. General Requirements - All
+- "Stories" are tasks listed in the requirements document.
+- Briefly mentioned the current functionality of encryption and the GUI.
