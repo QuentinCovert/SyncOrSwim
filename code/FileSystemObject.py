@@ -5,8 +5,7 @@ class FileSystemObject(metaclass=ABCMeta):
 
     __metaclass__ = ABCMeta
     
-    def __init__(self, fileName, path, mod, deleted, encrypted, lastSync):
-        self.filePath = path
+    def __init__(self, path, mod, deleted, encrypted, lastSync):
         self.lastModified = mod
         self.fileDeleted = deleted
         self.encryptionOn = encrypted
@@ -21,8 +20,8 @@ class FileSystemObject(metaclass=ABCMeta):
 
 class File(FileSystemObject):
 
-    def __init__(self, fileName, path, mod, deleted, encrypted, lastSync, ePath, hash):
-        super().__init__(fileName, path, mod, deleted, encrypted, lastSync)
+    def __init__(self, path, mod, deleted, encrypted, lastSync, ePath, hash):
+        super().__init__(path, mod, deleted, encrypted, lastSync)
         self.encryptedFilePath = ePath
         self.hash = hash
     
@@ -48,8 +47,8 @@ class File(FileSystemObject):
 
 class Directory(FileSystemObject):
     
-    def __init__(self, fileName, path, mod, deleted, encrypted, lastSync, files):
-        super().__init__(fileName, path, mod, deleted, encrypted, lastSync)
+    def __init__(self, path, mod, deleted, encrypted, lastSync, files):
+        super().__init__(path, mod, deleted, encrypted, lastSync)
         self.files = files
     
     def encrypt(self, crypto):
