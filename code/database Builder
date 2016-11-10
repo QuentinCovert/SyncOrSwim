@@ -6,7 +6,8 @@ CREATE TABLE files (
     "deleted" BOOLEAN NOT NULL,
     "toEncrypt" BOOLEAN NOT NULL,
     "lastSync" DATETIME,
-    "encryptedPath" TEXT
+    "encryptedPath" TEXT,
+    "parent" TEXT
 );
 CREATE TABLE directories (
     "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
@@ -14,6 +15,6 @@ CREATE TABLE directories (
     "deleted" BOOLEAN NOT NULL,
     "toEncrypt" BOOLEAN NOT NULL,
     "lastSync" DATETIME,
-    "children" INT NOT NULL
+    "parent" TEXT
 );
 
