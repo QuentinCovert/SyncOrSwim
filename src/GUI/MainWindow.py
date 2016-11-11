@@ -44,6 +44,15 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Sync Or Swim", None))
         self.rootLabel.setText(_translate("MainWindow", "Choose Root Directory:", None))
+        self.rootDirComboBox.setItemText(0, _translate("MainWindow", "Homework", None)) #TODO: remove line. Placeholder for phase III.
+        self.ignoredTitleLabel.setText(_translate("MainWindow", "Item Ignored:", None))
+        self.ingoreOutput.setText(_translate("MainWindow", "No", None))
+        self.encryptEnableTitleLabel.setText(_translate("MainWindow", "Auto-Encrypt Enabled:", None))
+        self.encryptOutput.setText(_translate("MainWindow", "Yes", None))
+        self.lastUpatedTitleLabel.setText(_translate("MainWindow", "Last updated:", None))
+        self.lastUpdatedOutput.setText(_translate("MainWindow", "11/11/2016", None))
+        self.lastSyncedTitleLabel.setText(_translate("MainWindow", "Last Synced:", None))
+        self.lastSyncedOutput.setText(_translate("MainWindow", "11/11/2016", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
@@ -81,7 +90,7 @@ class Ui_MainWindow(object):
         self.bottomHorizontalLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
         self.bottomHorizontalLayout.setObjectName(_fromUtf8("bottomHorizontalLayout"))
         self.createFileSystemView()
-        self.createOptionsTable()
+        self.createOptionsLayout()
         self.verticalLayout.addLayout(self.bottomHorizontalLayout)  #Finish the bottom layout.
         MainWindow.setCentralWidget(self.centralwidget) #Finsih layout.
 
@@ -109,6 +118,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.rootDirComboBox.sizePolicy().hasHeightForWidth())
         self.rootDirComboBox.setSizePolicy(sizePolicy)
         self.rootDirComboBox.setObjectName(_fromUtf8("rootDirComboBox"))
+        self.rootDirComboBox.addItem(_fromUtf8("")) #TODO: remove line. Placeholder for phase III.
         self.topHorizontalLayout.addWidget(self.rootDirComboBox)
 
     #This is a simple spacer item which keeps the label and combo box to the left:
@@ -123,12 +133,92 @@ class Ui_MainWindow(object):
         self.bottomHorizontalLayout.addWidget(self.fileSystemView)
 
     #Create the optionsTableWidget:
-    def createOptionsTable(self):
-        self.optionsTableWidget = QtGui.QTableWidget(self.centralwidget)
-        self.optionsTableWidget.setObjectName(_fromUtf8("optionsTableWidget"))
-        self.optionsTableWidget.setColumnCount(0)
-        self.optionsTableWidget.setRowCount(0)
-        self.bottomHorizontalLayout.addWidget(self.optionsTableWidget)
+    def createOptionsLayout(self):
+        self.formLayout = QtGui.QFormLayout()
+        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout.setLabelAlignment(QtCore.Qt.AlignCenter)
+        self.formLayout.setFormAlignment(QtCore.Qt.AlignCenter)
+        self.formLayout.setContentsMargins(5, -1, 5, -1)
+        self.formLayout.setHorizontalSpacing(20)
+        self.formLayout.setVerticalSpacing(60)
+        self.formLayout.setObjectName(_fromUtf8("formLayout"))
+
+        #Create the "Item Ignored" GUI label:
+        self.ignoredTitleLabel = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.ignoredTitleLabel.setFont(font)
+        self.ignoredTitleLabel.setObjectName(_fromUtf8("ignoredTitleLabel"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.ignoredTitleLabel)
+
+        #Create a label which will output the parameter indicating if the file is ignored
+        # by the filesystem.
+        self.ingoreOutput = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.ingoreOutput.setFont(font)
+        self.ingoreOutput.setObjectName(_fromUtf8("ingoreOutput"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.ingoreOutput)
+
+        #Create the "Auto Encrypt Enabled" GUI label:
+        self.encryptEnableTitleLabel = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.encryptEnableTitleLabel.setFont(font)
+        self.encryptEnableTitleLabel.setObjectName(_fromUtf8("encryptEnableTitleLabel"))
+        self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.encryptEnableTitleLabel)
+
+        #Create a label which will output the parameter indicating if the file will be
+        # encrypted by the encryption module.
+        self.encryptOutput = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.encryptOutput.setFont(font)
+        self.encryptOutput.setObjectName(_fromUtf8("encryptOutput"))
+        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.encryptOutput)
+
+        #Create the "Last Updated" GUI label:
+        self.lastUpatedTitleLabel = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.lastUpatedTitleLabel.setFont(font)
+        self.lastUpatedTitleLabel.setObjectName(_fromUtf8("lastUpatedTitleLabel"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.lastUpatedTitleLabel)
+
+        #Create a label which will output the parameter indicating the last time a selected
+        # file/dir was changed.
+        self.lastUpdatedOutput = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.lastUpdatedOutput.setFont(font)
+        self.lastUpdatedOutput.setObjectName(_fromUtf8("lastUpdatedOutput"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.lastUpdatedOutput)
+
+        #Create the "Last Synced" GUI label:
+        self.lastSyncedTitleLabel = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.lastSyncedTitleLabel.setFont(font)
+        self.lastSyncedTitleLabel.setObjectName(_fromUtf8("lastSyncedTitleLabel"))
+        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.lastSyncedTitleLabel)
+
+        #Create a label which will output the parameter indicating the last time a selected
+        # file/dir was synced by the database module.
+        self.lastSyncedOutput = QtGui.QLabel(self.centralwidget)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.lastSyncedOutput.setFont(font)
+        self.lastSyncedOutput.setObjectName(_fromUtf8("lastSyncedOutput"))
+        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.lastSyncedOutput)
+        self.bottomHorizontalLayout.addLayout(self.formLayout)
 
     #Create the menu bar:
     def createMenuBar(self, MainWindow):
