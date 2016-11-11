@@ -17,8 +17,12 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
+#Note: this was auto-generated so it's a little messy. It has been organzied,
+# as best I could. -Levi
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
+
+        #Inital setup:
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.resize(1060, 620)
         MainWindow.setMinimumSize(QtCore.QSize(1060, 620))
@@ -27,90 +31,12 @@ class Ui_MainWindow(object):
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout.setContentsMargins(20, 20, 20, 0)
-        self.verticalLayout.setSpacing(20)
-        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
-        self.rootLabel = QtGui.QLabel(self.centralwidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.rootLabel.sizePolicy().hasHeightForWidth())
-        self.rootLabel.setSizePolicy(sizePolicy)
-        self.rootLabel.setTextFormat(QtCore.Qt.AutoText)
-        self.rootLabel.setObjectName(_fromUtf8("rootLabel"))
-        self.horizontalLayout_2.addWidget(self.rootLabel)
-        self.rootDirComboBox = QtGui.QComboBox(self.centralwidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.rootDirComboBox.sizePolicy().hasHeightForWidth())
-        self.rootDirComboBox.setSizePolicy(sizePolicy)
-        self.rootDirComboBox.setObjectName(_fromUtf8("rootDirComboBox"))
-        self.horizontalLayout_2.addWidget(self.rootDirComboBox)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.horizontalLayout_2.addItem(spacerItem)
-        self.verticalLayout.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
-        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.fileSystemView = QtGui.QTreeView(self.centralwidget)
-        self.fileSystemView.setObjectName(_fromUtf8("fileSystemView"))
-        self.horizontalLayout.addWidget(self.fileSystemView)
-        self.optionsTableWidget = QtGui.QTableWidget(self.centralwidget)
-        self.optionsTableWidget.setObjectName(_fromUtf8("optionsTableWidget"))
-        self.optionsTableWidget.setColumnCount(0)
-        self.optionsTableWidget.setRowCount(0)
-        self.horizontalLayout.addWidget(self.optionsTableWidget)
-        self.verticalLayout.addLayout(self.horizontalLayout)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1060, 26))
-        self.menubar.setObjectName(_fromUtf8("menubar"))
-        self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setObjectName(_fromUtf8("menuFile"))
-        self.menuSettings = QtGui.QMenu(self.menubar)
-        self.menuSettings.setObjectName(_fromUtf8("menuSettings"))
-        self.menuHelp = QtGui.QMenu(self.menubar)
-        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(MainWindow)
-        self.statusbar.setObjectName(_fromUtf8("statusbar"))
-        MainWindow.setStatusBar(self.statusbar)
-        self.actionEncrypt_Local_File = QtGui.QAction(MainWindow)
-        self.actionEncrypt_Local_File.setObjectName(_fromUtf8("actionEncrypt_Local_File"))
-        self.actionManage_Root_Directories = QtGui.QAction(MainWindow)
-        self.actionManage_Root_Directories.setObjectName(_fromUtf8("actionManage_Root_Directories"))
-        self.actionCreate_New_Encryption_Key = QtGui.QAction(MainWindow)
-        self.actionCreate_New_Encryption_Key.setObjectName(_fromUtf8("actionCreate_New_Encryption_Key"))
-        self.actionSet_Remote_File_System_Target = QtGui.QAction(MainWindow)
-        self.actionSet_Remote_File_System_Target.setObjectName(_fromUtf8("actionSet_Remote_File_System_Target"))
-        self.actionSet_Encryption_Options = QtGui.QAction(MainWindow)
-        self.actionSet_Encryption_Options.setObjectName(_fromUtf8("actionSet_Encryption_Options"))
-        self.actionDocumentation = QtGui.QAction(MainWindow)
-        self.actionDocumentation.setObjectName(_fromUtf8("actionDocumentation"))
-        self.actionContact_Us = QtGui.QAction(MainWindow)
-        self.actionContact_Us.setObjectName(_fromUtf8("actionContact_Us"))
-        self.actionManage_Root_Directories_2 = QtGui.QAction(MainWindow)
-        self.actionManage_Root_Directories_2.setObjectName(_fromUtf8("actionManage_Root_Directories_2"))
-        self.actionExit = QtGui.QAction(MainWindow)
-        self.actionExit.setObjectName(_fromUtf8("actionExit"))
-        self.menuFile.addAction(self.actionEncrypt_Local_File)
-        self.menuFile.addAction(self.actionCreate_New_Encryption_Key)
-        self.menuFile.addSeparator()
-        self.menuFile.addAction(self.actionExit)
-        self.menuSettings.addAction(self.actionSet_Remote_File_System_Target)
-        self.menuSettings.addAction(self.actionSet_Encryption_Options)
-        self.menuSettings.addSeparator()
-        self.menuSettings.addAction(self.actionManage_Root_Directories_2)
-        self.menuHelp.addAction(self.actionDocumentation)
-        self.menuHelp.addSeparator()
-        self.menuHelp.addAction(self.actionContact_Us)
-        self.menubar.addAction(self.menuFile.menuAction())
-        self.menubar.addAction(self.menuSettings.menuAction())
-        self.menubar.addAction(self.menuHelp.menuAction())
+
+        #Create the GUI's layout:
+        self.createUiLayout(MainWindow)
+
+        #Create the GUI's menu bar:
+        self.createMenuBar(MainWindow)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -128,5 +54,136 @@ class Ui_MainWindow(object):
         self.actionSet_Encryption_Options.setText(_translate("MainWindow", "Set Encryption Options", None))
         self.actionDocumentation.setText(_translate("MainWindow", "Documentation", None))
         self.actionContact_Us.setText(_translate("MainWindow", "Contact Us", None))
-        self.actionManage_Root_Directories_2.setText(_translate("MainWindow", "Manage Root Directories", None))
+        self.actionManage_Root_Directories.setText(_translate("MainWindow", "Manage Root Directories", None))
         self.actionExit.setText(_translate("MainWindow", "Exit", None))
+
+    def createUiLayout(self, MainWindow):
+        #Create central 'vertical' GUI layout:
+        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setContentsMargins(20, 20, 20, 0)
+        self.verticalLayout.setSpacing(20)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+
+        #Create the top horizontal layout. This contains the label, combo box,
+        # and a spacer.
+        self.topHorizontalLayout = QtGui.QHBoxLayout()
+        self.topHorizontalLayout.setObjectName(_fromUtf8("topHorizontalLayout"))
+        self.createLabel()
+        self.createComboBox()
+        self.createSpacer()
+        self.verticalLayout.addLayout(self.topHorizontalLayout) #Finish of top layout.
+
+
+        #Create the bottom layout. This contains the treeView (which will display
+        # a tree struct of the current root dir the user is working with) and the
+        # options table (which will display the options set on a selected dir or file).
+        self.bottomHorizontalLayout = QtGui.QHBoxLayout()
+        self.bottomHorizontalLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
+        self.bottomHorizontalLayout.setObjectName(_fromUtf8("bottomHorizontalLayout"))
+        self.createFileSystemView()
+        self.createOptionsTable()
+        self.verticalLayout.addLayout(self.bottomHorizontalLayout)  #Finish the bottom layout.
+        MainWindow.setCentralWidget(self.centralwidget) #Finsih layout.
+
+
+    #Create root label. This is what says 'Choose Root Directory' on the GUI:
+    def createLabel(self):
+        self.rootLabel = QtGui.QLabel(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.rootLabel.sizePolicy().hasHeightForWidth())
+        self.rootLabel.setSizePolicy(sizePolicy)
+        self.rootLabel.setTextFormat(QtCore.Qt.AutoText)
+        self.rootLabel.setObjectName(_fromUtf8("rootLabel"))
+        self.topHorizontalLayout.addWidget(self.rootLabel)
+
+
+    #Create the combo box which will allow users to specify which root directory
+    # they wish to be working with.
+    def createComboBox(self):
+        self.rootDirComboBox = QtGui.QComboBox(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.rootDirComboBox.sizePolicy().hasHeightForWidth())
+        self.rootDirComboBox.setSizePolicy(sizePolicy)
+        self.rootDirComboBox.setObjectName(_fromUtf8("rootDirComboBox"))
+        self.topHorizontalLayout.addWidget(self.rootDirComboBox)
+
+    #This is a simple spacer item which keeps the label and combo box to the left:
+    def createSpacer(self):
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.topHorizontalLayout.addItem(spacerItem)
+
+    #Create the fileSystemView:
+    def createFileSystemView(self):
+        self.fileSystemView = QtGui.QTreeView(self.centralwidget)
+        self.fileSystemView.setObjectName(_fromUtf8("fileSystemView"))
+        self.bottomHorizontalLayout.addWidget(self.fileSystemView)
+
+    #Create the optionsTableWidget:
+    def createOptionsTable(self):
+        self.optionsTableWidget = QtGui.QTableWidget(self.centralwidget)
+        self.optionsTableWidget.setObjectName(_fromUtf8("optionsTableWidget"))
+        self.optionsTableWidget.setColumnCount(0)
+        self.optionsTableWidget.setRowCount(0)
+        self.bottomHorizontalLayout.addWidget(self.optionsTableWidget)
+
+    #Create the menu bar:
+    def createMenuBar(self, MainWindow):
+        self.menubar = QtGui.QMenuBar(MainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1060, 26))
+        self.menubar.setObjectName(_fromUtf8("menubar"))
+
+        #Create the menu bar's tabs:
+        self.menuFile = QtGui.QMenu(self.menubar)
+        self.menuFile.setObjectName(_fromUtf8("menuFile"))
+        self.menuSettings = QtGui.QMenu(self.menubar)
+        self.menuSettings.setObjectName(_fromUtf8("menuSettings"))
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
+        MainWindow.setMenuBar(self.menubar)
+
+        #Honestly, not %100 sure what the statusbar is... It's something that was auto-generated.
+        self.statusbar = QtGui.QStatusBar(MainWindow)
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        MainWindow.setStatusBar(self.statusbar)
+
+        #Add actions to the File tab:
+        self.actionEncrypt_Local_File = QtGui.QAction(MainWindow)
+        self.actionEncrypt_Local_File.setObjectName(_fromUtf8("actionEncrypt_Local_File"))
+        self.menuFile.addAction(self.actionEncrypt_Local_File)
+        self.actionCreate_New_Encryption_Key = QtGui.QAction(MainWindow)
+        self.actionCreate_New_Encryption_Key.setObjectName(_fromUtf8("actionCreate_New_Encryption_Key"))
+        self.menuFile.addAction(self.actionCreate_New_Encryption_Key)
+        self.menuFile.addSeparator()
+        self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.setObjectName(_fromUtf8("actionExit"))
+        self.menuFile.addAction(self.actionExit)
+
+        #Add actions to Settings tab:
+        self.actionSet_Remote_File_System_Target = QtGui.QAction(MainWindow)
+        self.actionSet_Remote_File_System_Target.setObjectName(_fromUtf8("actionSet_Remote_File_System_Target"))
+        self.menuSettings.addAction(self.actionSet_Remote_File_System_Target)
+        self.actionSet_Encryption_Options = QtGui.QAction(MainWindow)
+        self.actionSet_Encryption_Options.setObjectName(_fromUtf8("actionSet_Encryption_Options"))
+        self.menuSettings.addAction(self.actionSet_Encryption_Options)
+        self.menuSettings.addSeparator()
+        self.actionManage_Root_Directories = QtGui.QAction(MainWindow)
+        self.actionManage_Root_Directories.setObjectName(_fromUtf8("actionManage_Root_Directories"))
+        self.menuSettings.addAction(self.actionManage_Root_Directories)
+
+        #Add actions to Help tab:
+        self.actionDocumentation = QtGui.QAction(MainWindow)
+        self.actionDocumentation.setObjectName(_fromUtf8("actionDocumentation"))
+        self.menuHelp.addAction(self.actionDocumentation)
+        self.menuHelp.addSeparator()
+        self.actionContact_Us = QtGui.QAction(MainWindow)
+        self.actionContact_Us.setObjectName(_fromUtf8("actionContact_Us"))
+        self.menuHelp.addAction(self.actionContact_Us)
+
+        #Add tabs to menu:
+        self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuSettings.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
