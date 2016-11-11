@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 from PyQt4 import QtCore, QtGui
 
 try:
@@ -24,16 +27,44 @@ class Ui_MainWindow(object):
         MainWindow.setWindowIcon(icon)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
-        self.horizontalLayout_2 = QtGui.QHBoxLayout(self.centralwidget)
-        self.horizontalLayout_2.setContentsMargins(20, 10, 20, 0)
-        self.horizontalLayout_2.setSpacing(20)
+        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout.setContentsMargins(20, 20, 20, 0)
+        self.verticalLayout.setSpacing(20)
+        self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
+        self.horizontalLayout_2 = QtGui.QHBoxLayout()
         self.horizontalLayout_2.setObjectName(_fromUtf8("horizontalLayout_2"))
+        self.rootLabel = QtGui.QLabel(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.rootLabel.sizePolicy().hasHeightForWidth())
+        self.rootLabel.setSizePolicy(sizePolicy)
+        self.rootLabel.setTextFormat(QtCore.Qt.AutoText)
+        self.rootLabel.setObjectName(_fromUtf8("rootLabel"))
+        self.horizontalLayout_2.addWidget(self.rootLabel)
+        self.rootDirComboBox = QtGui.QComboBox(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.rootDirComboBox.sizePolicy().hasHeightForWidth())
+        self.rootDirComboBox.setSizePolicy(sizePolicy)
+        self.rootDirComboBox.setObjectName(_fromUtf8("rootDirComboBox"))
+        self.horizontalLayout_2.addWidget(self.rootDirComboBox)
+        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout_2.addItem(spacerItem)
+        self.verticalLayout.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout = QtGui.QHBoxLayout()
+        self.horizontalLayout.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
+        self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
         self.fileSystemView = QtGui.QTreeView(self.centralwidget)
         self.fileSystemView.setObjectName(_fromUtf8("fileSystemView"))
-        self.horizontalLayout_2.addWidget(self.fileSystemView)
-        self.optionsView = QtGui.QTableView(self.centralwidget)
-        self.optionsView.setObjectName(_fromUtf8("optionsView"))
-        self.horizontalLayout_2.addWidget(self.optionsView)
+        self.horizontalLayout.addWidget(self.fileSystemView)
+        self.optionsTableWidget = QtGui.QTableWidget(self.centralwidget)
+        self.optionsTableWidget.setObjectName(_fromUtf8("optionsTableWidget"))
+        self.optionsTableWidget.setColumnCount(0)
+        self.optionsTableWidget.setRowCount(0)
+        self.horizontalLayout.addWidget(self.optionsTableWidget)
+        self.verticalLayout.addLayout(self.horizontalLayout)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1060, 26))
@@ -86,6 +117,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Sync Or Swim", None))
+        self.rootLabel.setText(_translate("MainWindow", "Choose Root Directory:", None))
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
@@ -98,13 +130,3 @@ class Ui_MainWindow(object):
         self.actionContact_Us.setText(_translate("MainWindow", "Contact Us", None))
         self.actionManage_Root_Directories_2.setText(_translate("MainWindow", "Manage Root Directories", None))
         self.actionExit.setText(_translate("MainWindow", "Exit", None))
-
-
-if __name__ == "__main__":
-    import sys
-    app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
-    sys.exit(app.exec_())
