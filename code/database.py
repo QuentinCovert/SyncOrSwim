@@ -20,6 +20,7 @@ class FileObject(Base):
         toEncrypt = Column(Boolean)
         lastSync = Column(DateTime, default=datetime.datetime.utcnow)
         encryptedPath = Column(String)
+        parent = Column(String)
         
 #	def __init__(self, path, lastModified, deleted, toEncrypt, lastSync, encryptedPath):
 #		self.path = path
@@ -36,6 +37,7 @@ class FileObject(Base):
                 self.toEncrypt = args[0].encryptionOn
                 self.lastSync = args[0].lastSyncTime
                 self.encryptedPath = args[0].encryptedFilePath
+                self.parent = args[0].parent
             else:
                 self.path = args[0]
                 self.lastModified = args[1]
@@ -43,9 +45,10 @@ class FileObject(Base):
                 self.toEncrypt = args[3]
                 self.lastSync = args[4]
                 self.encryptedPath = args[5]
+                self.parent = args[6]
       
         def convert(self):
-            return File(self.path, self.path, self.lastModified, self.deleted, self.toEncrypt, self.lastSync, self.encryptedPath, hash)
+            return File(self.path, self.path, self.lastModified, self.deleted, self.toEncrypt, self.lastSync, self.encryptedPath)
 class DirectoryObject(Base):
         __tablename__ = 'directories'
         path = Column(String, primary_key=True)
@@ -53,7 +56,7 @@ class DirectoryObject(Base):
         deleted = Column(Boolean)
         toEncrypt = Column(Boolean)
         lastSync = Column(DateTime, default=datetime.datetime.utcnow)
-        children = Column(Integer)
+        parent = Column(String)
         
 #	def __init__(self, path, lastModified, deleted, toEncrypt, lastSync, children):
 #		self.path = path
@@ -70,20 +73,22 @@ class DirectoryObject(Base):
                 self.deleted = args[0].fileDeleted
                 self.toEncrypt = args[0].encryptionOn
                 self.lastSync = args[0].lastSyncTime
-                self.children = len(args[0].files)
+                self.parent = args[0].parent
             else:
                 self.path = args[0]
                 self.lastModified = args[1]
                 self.deleted = args[2]
                 self.toEncrypt = args[3]
                 self.lastSync = args[4]
-                self.children = args[5]
+                self.parent = args[5]
         def convert(self):
-            return Directory(self.path, self.path, self.lastModified, self.deleted, self.toEncrypt, self.lastSync, self.children)
+            return Directory(self.path, self.lastModified, self.deleted, self.toEncrypt, self.lastSync,[], self.parent)
+
+#Retrieve file or directory from database based on relative path
 def retrieve(path):
         session = Session()
         a = session.query(FileObject).filter_by(path=path).all()
-        #Options: determine if its looking for a file or directory based on path, create different functions for both, or do nothing
+        #If a file with matching path is found
         if (len(a)==1):
                 b = a[0]
                 session.close()
@@ -91,10 +96,23 @@ def retrieve(path):
                 return obj
         else:
                 a = session.query(DirectoryObject).filter_by(path=path).all()
+                #If a directory with matching path is found
                 if(len(a)==1):
                         b = a[0]
-                        session.close()
+                        #convert to Directory
                         obj = b.convert()
+                        #find all files in directory
+                        c = session.query(FileObject).filter_by(parent=obj.filePath).all()
+                        for fd in c:
+                            obj.files.append(fd.convert())
+                        #find all subdirectories
+                        d = session.query(DirectoryObject).filter_by(parent = obj.filePath).all()
+                        print(d)
+                        for fd in d:
+                            print(fd.path)
+                            obj.files.append(retrieve(fd.path))
+                            
+                        session.close()
                         return obj
                 else:
                         return None
@@ -104,6 +122,8 @@ def delete(obj1):
         session = Session()
         path = obj1.filePath
         if(type(obj1) is Directory):
+            for fd in obj1.files:
+                delete(fd)
             session.query(DirectoryObject).filter_by(path=path).delete()
         
         if(type(obj1) is File):
@@ -119,9 +139,12 @@ def store(obj1):
         if((type(obj1) is File) or (type(obj1) is Directory)):	
                 if(type(obj1) is Directory):
                         obj2 = DirectoryObject(obj1)
+                        for fd in obj1.files:
+                            #print("executed")
+                            store(fd)
                 if(type(obj1) is File):	
                         obj2 = FileObject(obj1)
-                        session = Session()
+                session = Session()
                 session.merge(obj2)
                 session.commit()
                 session.close()
