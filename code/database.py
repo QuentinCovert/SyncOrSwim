@@ -95,7 +95,7 @@ def retrieve(path1):
                 obj = b.convert()
                 return obj
         else:
-                a = session.query(DirectoryObject).filter_by(path=path).all()
+                a = session.query(DirectoryObject).filter_by(path=path1).all()
                 #If a directory with matching path is found
                 if(len(a)==1):
                         b = a[0]
@@ -154,11 +154,26 @@ def store(obj1):
 
 def cull():
     session = Session()
-    session.query(FileObject).filter(FileObject.deleted = True).delete()
-    session.query(DirectoryObject).filter(DirectoryObject.deleted = True).delete()
+    session.query(FileObject).filter_by(deleted = True).delete()
+    session.query(DirectoryObject).filter_by(deleted = True).delete()
     session.commit()
     session.close()
 
+def pullRoots():
+    session = Session()
+    roots = session.query(DirectoryObject).filter_by(parent = "").all()
+    rootObjects = []
+    print(roots)
+    for root in roots:
+        rootObjects.append(retrieve(root.path))
+    return rootObjects
 
+def syncRoots():
+    roots = pullRoots
+    outOfSync = []
+    for root in roots:
+        if(root.lastModified > root.lastSyncTime):
+            outOfSync.append(root)
+    return outOfSync
 
 
