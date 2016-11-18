@@ -8,9 +8,9 @@ def createFSO(relPath, rootAbsPath):
    # print(absPath)
     f = None
     if(os.path.isfile(absPath)):
-        f = File(relPath, datetime.datetime.now(), False, False, datetime.datetime.now(), path, os.path.dirname(relPath))
+        f = File(relPath, datetime.datetime.now(), False, False, datetime.datetime.now(), "")
     if(os.path.isdir(absPath)):
-        f = Directory(relPath, datetime.datetime.now(), False, False, datetime.datetime.now(), [], os.path.dirname(relPath))
+        f = Directory(relPath, datetime.datetime.now(), False, False, datetime.datetime.now(), [])
         for fd in os.listdir(absPath):
             #print(relPath + "/" + fd)
             g = createFSO((relPath + "/" +fd), rootAbsPath)

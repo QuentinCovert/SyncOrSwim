@@ -6,7 +6,7 @@ class FileSystemObject(metaclass=ABCMeta):
     __metaclass__ = ABCMeta
     
     def __init__(self, path, mod, deleted, encrypted, lastSync):
-        self.filePath = path
+        self.path = path
         self.lastModified = mod
         self.fileDeleted = deleted
         self.encryptionOn = encrypted
@@ -20,37 +20,21 @@ class FileSystemObject(metaclass=ABCMeta):
 
 class File(FileSystemObject):
 
-    def __init__(self, path, mod, deleted, encrypted, lastSync, ePath, parent):
+    def __init__(self, path, mod, deleted, encrypted, lastSync, ePath):
         super().__init__(path, mod, deleted, encrypted, lastSync)
         self.encryptedFilePath = ePath
-        self.parent = parent
     
     def encrypt(self, crypto):
         return encrypt(crypto, self)
     
     def decrypt(self, crypto):
         return decrypt(crypto, self)
-        
-    def verify(self):
-        # Open,close, read file and calculate MD5 on its contents 
-        with open(self.fileName) as file:
-            # read contents of the file
-            data = file.read()    
-            # pipe contents of the file through
-            md5_returned = hashlib.md5(data).hexdigest()
-
-        # Finally compare original MD5 with freshly calculated
-        if orginal_md5 == md5_returned:
-            return true
-        else:
-            return false
 
 class Directory(FileSystemObject):
     
-    def __init__(self, path, mod, deleted, encrypted, lastSync, files, parent):
+    def __init__(self, path, mod, deleted, encrypted, lastSync, files):
         super().__init__(path, mod, deleted, encrypted, lastSync)
         self.files = files
-        self.parent = parent
     
     def encrypt(self, crypto):
         for file in files:
