@@ -3,9 +3,6 @@ import json
 import socket
 
 class Watchman:
-    def __init__(self):
-        # To be defined later.
-        self.default_trigger_command = ''
 
     def getSocketLocation(self):
         # Use command line to retrieve socket location
@@ -25,29 +22,51 @@ class Watchman:
         s.send(jsonObj.encode())
         data = s.recv(1024)
         s.close
-        return data.decode()
+
+        response = data.decode()
+        # Check for error in response
+        responseObj = json.loads(response)
+        if 'error' in responseObj:
+            print('ERROR: ' + responseObj['error'])
+
+        # Return the JSON formatted response
+        return response
 
     def checkVersion(self):
         response = self.socketCommunicate(['version'])
         version = json.loads(response)['version']
         return version
 
-    def subscribe(self, path_to_root, trigger_name, ignored_files):
-        expression = [
-            ['anyof', ['type', 'f'], ['type', 'd']]
-        ]
+    def subscribe(self, path_to_root, subscription_name, ignored_files_list = None):
+        # Watch anything that is a file (f) or directory (d) in this root directory
+        expression = {'expression': ['anyof', ['type', 'f'], ['type', 'd']]}
 
-        #TODO: Add ignored files filter
-        #TODO: Add command to run on trigger
-        command = ['']
+        # Add ignored files to the filter
+        # If they are specified
+        if not (ignored_files_list is None or type(ignored_files_list) != type([])):
+            expression['expression'].append(['not', ignored_files_list])
 
-    def unsubscribe(self, path_to_root, trigger_name):
-        unsubRequest = ['unsubscribe', path_to_root, trigger_name]
+        subRequest = ['subscribe', path_to_root, subscription_name, expression]
+
+        response = self.socketCommunicate(subRequest)
+        print(response)
+        return response
+
+    def unsubscribe(self, path_to_root, subscription_name):
+        unsubRequest = ['unsubscribe', path_to_root, subscription_name]
         response = self.socketCommunicate(unsubRequest)
         print(response)
+        return response
 
-class Trigger:
-    __init__(self, name, expression, command):
-        self.name = name
-        self.expression = expression
-        self.command = command
+    def clock(self, path_to_root):
+        clockRequest = ['clock', path_to_root]
+        response = self.socketCommunicate(clockRequest)
+        print(response)
+        return response
+
+    def since(self, path_to_root, subscription_name, clockSpec):
+        sinceObj = {'since': clockSpec}
+        sinceRequest = ['query', path_to_root, sinceObj]
+        response = self.socketCommunicate(sinceRequest)
+        print(response)
+        return response
