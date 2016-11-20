@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-import hashlib
 
 class FileSystemObject(metaclass=ABCMeta):
 

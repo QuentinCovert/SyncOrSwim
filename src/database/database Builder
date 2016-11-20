@@ -1,3 +1,4 @@
+sqlite3 SyncOrSwimDB.db
 DROP TABLE files;
 DROP TABLE directories;
 CREATE TABLE files (
@@ -6,7 +7,8 @@ CREATE TABLE files (
     "deleted" BOOLEAN NOT NULL,
     "toEncrypt" BOOLEAN NOT NULL,
     "lastSync" DATETIME,
-    "encryptedPath" TEXT
+    "encryptedPath" TEXT,
+    "parent" TEXT NOT NULL
 );
 CREATE TABLE directories (
     "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
@@ -14,6 +16,6 @@ CREATE TABLE directories (
     "deleted" BOOLEAN NOT NULL,
     "toEncrypt" BOOLEAN NOT NULL,
     "lastSync" DATETIME,
-    "children" INT NOT NULL
+    "parent" TEXT
 );
 
