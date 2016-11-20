@@ -1,0 +1,26 @@
+Meeting
+November 09, 2016
+
+Present:
+    Cameron
+    Quentin
+    Collin
+    Mark
+    Levi
+
+Description:
+    Virtual team meeting over Slack and Google Hangouts. Primarily discussed work on the Database and FileSystem objects.
+
+Duration: 45 minutes
+
+Discussion:
+- Discussed about the current implementation of the FileSystem object.
+  + It was debated if it was necessary to add a pointer to the parent file of a file, it was deemed not necessary.
+  + The path of the file will be its unique key in the database.
+- We decided that the file's UUId could be used for its encrypted filename.
+- The crypto module is nearing completion, Cameron stated that was just a few tweaks needing to be made.
+- Levi stated that he would likely have a prototype GUI by Friday, i.e. release 3.
+  + It was brought up that having the functionality to obtain a list of root directories would be optimal for
+      the GUI. Collin said he'd start work on it.
+  + If the File System module is not functional by Friday, mock data will be used for presentation of GUI.
+- The Watchman module is still in the research stage.

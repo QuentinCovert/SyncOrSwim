@@ -1,0 +1,20 @@
+Meeting
+October 10, 2016
+
+Present:
+    Cameron
+    Quentin
+    Collin
+    Mark
+    Levi
+
+Description:
+    Virtual team meeting over slack and Google Hangouts
+
+Duration: 60 minutes
+
+Discussion
+- Tested Feasability of github.
+- Delegated tasks
+- Worked through technical problems of communication w/ hangouts
+- Discussed phase 2 requirements.
