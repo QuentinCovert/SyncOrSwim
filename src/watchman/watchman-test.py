@@ -1,28 +1,37 @@
 from watchman import Watchman
 import sys
+import json
 
-if len(sys.argv) != 3:
+if not(len(sys.argv) == 3 or len(sys.argv) == 4):
     print('Command-line arguments must follow this format:')
-    print('$ python watchman-test.py [rootPath] [subscriptionName]\n')
+    print('$ python watchman-test.py [rootPath] [subscriptionName] [clockspec value]')
 else:
     print(sys.argv[1])
-    print(sys.argv[2])
-
     rootPath = sys.argv[1]
+
+    print(sys.argv[2])
     subscriptionName = sys.argv[2]
 
+    clockSpec = None
+    if len(sys.argv) == 4:
+        print(sys.argv[3])
+        clockSpec = sys.argv[3]
+
+    print('\n====Checking Watchman interface====\n')
     watch = Watchman()
     # print('Subscribing...')
-    # watch.subscribe(rootPath, subscriptionName)
+    # subResult = watch.subscribe(rootPath, subscriptionName)
+    # print(subResult)
 
     # print('Unsubscribing...')
-    # watch.unsubscribe(rootPath, subscriptionName)
+    # unsubResult = watch.unsubscribe(rootPath, subscriptionName)
+    # print(unsubResult)
 
-    print('Checking clock')
-    watch.clock(rootPath)
+    print('Checking clock:')
+    clock = watch.clock(rootPath)
+    print(clock)
 
-    # print('Getting changed files')
-    # watch.since(rootPath)
-
-    # print("Socket Location: " + watch.getSocketLocation())
-    # print("Version: " + watch.checkVersion())
+    if not (clockSpec is None):
+        print('\nGetting changed files:')
+        result = watch.since(rootPath, clockSpec)
+        print(json.dumps(result, indent = 4))
