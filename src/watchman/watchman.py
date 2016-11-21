@@ -1,7 +1,6 @@
 import os
 import json
 import socket
-import time
 
 class Watchman:
     def __init__(self):
