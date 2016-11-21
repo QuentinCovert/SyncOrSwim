@@ -33,5 +33,6 @@ else:
 
     if not (clockSpec is None):
         print('\nGetting changed files:')
-        result = watch.since(rootPath, clockSpec)
+        # The third argument is optional
+        result = watch.since(rootPath, clockSpec, ['**/*.txt'])
         print(json.dumps(result, indent = 4))
