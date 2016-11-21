@@ -30,7 +30,8 @@ class File(FileSystemObject):
         return decrypt(crypto, self)
 
     def printFile(self):
-        print(self.path);
+        print("File:")
+        print(self.path)
 
 class Directory(FileSystemObject):
     
@@ -57,7 +58,12 @@ class Directory(FileSystemObject):
             encrypt(file, crypto)
         return files
     
+    def printDirectoryNoChildren(self):
+        print("Directory:")
+        print(self.path)
+    
     def printDirectory(self):
+        print("Directory:")
         print(self.path)
         for file in self.files:
             if(isinstance(file, File)):
