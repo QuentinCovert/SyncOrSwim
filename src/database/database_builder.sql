@@ -1,6 +1,7 @@
-sqlite3 SyncOrSwimDB.db
 DROP TABLE files;
 DROP TABLE directories;
+DROP TABLE global_settings;
+DROP TABLE global_roots;
 CREATE TABLE files (
     "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
     "lastModified" DATETIME NOT NULL,
@@ -18,4 +19,11 @@ CREATE TABLE directories (
     "lastSync" DATETIME,
     "parent" TEXT
 );
-
+CREATE TABLE global_settings(
+    "name" TEXT PRIMARY KEY NOT NULL UNIQUE,
+    "value" INTEGER,
+    "enabled" BOOLEAN NOT NULL
+);
+CREATE TABLE global_roots(
+    "root" TEXT PRIMARY KEY NOT NULL UNIQUE
+);

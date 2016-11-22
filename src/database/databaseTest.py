@@ -19,7 +19,7 @@ def createFSO(relPath, rootAbsPath):
     return f
 
 
-path = os.path.dirname(os.getcwd())
+path = os.path.dirname(os.path.dirname(os.getcwd()))
 root = os.path.dirname(path)
 path = os.path.relpath(path, root)
 testRoot = createFSO(path, root)

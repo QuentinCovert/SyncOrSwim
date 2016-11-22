@@ -68,6 +68,28 @@ class DirectoryObject(Base):
                 self.parent = args[5]
         def convert(self):
             return Directory(self.path, self.lastModified, self.deleted, self.toEncrypt, self.lastSync,[])
+        
+        
+class GlobalSetting(Base):
+        __tablename__ = 'global_settings'
+        name = Column(String, primary_key=True)
+        value = Column(Integer)
+        enabled = Column(Boolean)
+        
+        def __init__(self, name, value, enabled):
+            self.name = name
+            self.value = value
+            self.enabled = enabled
+        
+class GlobalRoots(Base):
+        __tablename__ = 'global_roots'
+        name = Column(String, primary_key=True)
+        
+        def __init__(self, name):
+            self.name = name
+      
+      
+#Files and Directories Section
 
 #Retrieve file or directory from database based on relative path
 def retrieve(path1):
@@ -101,7 +123,30 @@ def retrieve(path1):
                         return obj
                 else:
                         return None
+                
+#Retrieve file or directory, but not any subdirectories
+def fastRetrieve(path):
+        session = Session()
+        a = session.query(FileObject).filter_by(path=path1).all()
+        #If a file with matching path is found
+        if (len(a)==1):
+                b = a[0]
+                session.close()
+                obj = b.convert()
+                return obj
+        else:
+                a = session.query(DirectoryObject).filter_by(path=path1).all()
+                #If a directory with matching path is found
+                if(len(a)==1):
+                        b = a[0]
+                        #convert to Directory
+                        obj = b.convert()
+                        session.close()
+                        return obj
+                else:
+                        return None
 
+#deletes file or directory and all subdirectories from database
 def delete(obj1):
     if((type(obj1) is File) or (type(obj1) is Directory)):
         session = Session()
@@ -119,7 +164,7 @@ def delete(obj1):
     else:
         return False
 
-
+#stores file or directory and all subdirectories in database, if files are new they are added, otherwise they are just modified
 def store(obj1):
         if((type(obj1) is File) or (type(obj1) is Directory)):	
                 if(type(obj1) is Directory):
@@ -137,6 +182,7 @@ def store(obj1):
         else:
                 return False
 
+#deletes all files and directories that have been deleted from the file system
 def cull():
     session = Session()
     session.query(FileObject).filter_by(deleted = True).delete()
@@ -144,6 +190,7 @@ def cull():
     session.commit()
     session.close()
 
+#pulls roots from database
 def pullRoots():
     session = Session()
     roots = session.query(DirectoryObject).filter_by(parent = "").all()
@@ -153,6 +200,7 @@ def pullRoots():
         rootObjects.append(retrieve(root.path))
     return rootObjects
 
+#pulls everything that is out of sync out of the database, starting from the roots
 def syncRoots():
     roots = pullRoots()
     outOfSync = []
@@ -162,6 +210,7 @@ def syncRoots():
             outOfSync.append(root)
     return outOfSync
 
+#recursive function to check if the subfiles are out of sync
 def checkMod(checkList):
 	outOfSync = []
 	for fd in checkList:
@@ -175,11 +224,47 @@ def checkMod(checkList):
 	return outOfSync
 
 
+#Settings Section
 
+def retrieve_setting(name):
+    session = Session()
+    gs = session.query(GlobalSetting).filter_by(name = name).all()
+    if(gs != None):
+        if(gs[0].value == None):
+            return gs[0].enabled
+        if(gs[0].enabled == True):
+            return gs[0].value
+    else:
+        return None
 
+def change_setting(name, value, enabled):
+    gs = GlobalSetting(name, value, enabled)
+    session = Session()
+    session.merge(gs)
+    session.commit()
+    session.close()
+    return None
 
+def retrieve_roots():
+    session = Session()
+    r = []
+    roots = session.query(GlobalRoots).all()
+    for root in roots:
+        r.append(root.name)
+    return r
 
+def insert_root(name):
+    root = GlobalRoots(name)
+    session = Session()
+    session.merge(root)
+    session.commit()
+    session.close()
+    return None
 
-
-
+def delete_root(name):
+    session = Session()
+    session.query(GlobalRoots).filter_by(name = name).delete()
+    session.commit()
+    session.close()
+    return None
 
