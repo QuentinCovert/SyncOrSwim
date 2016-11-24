@@ -144,20 +144,3 @@ class TreeObject:
                     kid.printFile()
                 elif(isinstance(kid, TreeObject)):
                     kid.printTree()
-
-FSOGenerator = FSOTreeGenerator()
-FileOne = FileSystemObject.File("path1", True, False, False, "Today", "ePath")
-FileTwo = FileSystemObject.File("path2", False, False, False, "Today", "ePath")
-FileThree = FileSystemObject.File("path3", True, True, False, "Today", "ePath")
-Files = [FileOne, FileTwo]
-InnerDirectory = FileSystemObject.Directory("path4", False, False, True, "Earlier", Files)
-AboveFiles = [FileThree, InnerDirectory]
-TestDirectory = FileSystemObject.Directory("path5", False, False, True, "Earlier", AboveFiles)
-Tree = FSOGenerator.generateTree(TestDirectory)
-Tree.printTree()
-print("")
-Tree.addFileToDirectory(FileThree, InnerDirectory)
-Tree.printTree()
-file = Tree.removeChildByFilepath("path4")
-print("")
-Tree.printTree()
