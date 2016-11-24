@@ -67,6 +67,59 @@ class TreeObject:
                     if(child == kid):
                         return kid
         return False
+        
+    #Finds and returns the child which has the given filepath. False if it cannot be found.
+    def findChildByFilepath(self, path):
+        rootPath = self.getRoot().getPath()
+        if(path == rootPath):
+            return root
+        else:
+            children = self.getChildren()
+            for kid in children:
+                if(isinstance(kid, TreeObject)):
+                    kidPath = kid.getRoot().getPath()
+                    if(kidPath == path):
+                        return kid.getRoot()
+                    else:
+                        recSearchValue = kid.findChildByFilepath(path)
+                        if(recSearchValue != False):
+                            return recSearchValue
+                elif(isinstance(kid, FileSystemObject.File)):
+                    kidPath = kid.getPath()
+                    if(kidPath == path):
+                        return kid
+        return False
+        
+    def removeChildByFilepath(self, path):
+        self.removeChild(self.findChildByFilepath(path))
+    
+    def removeChild(self, child):
+        root = self.getRoot()
+        if(child == root):
+            self.root = None
+            self.children = None
+        else:
+            children = self.getChildren()
+            for kid in children:
+                if(isinstance(kid, TreeObject)):
+                    kidRoot = kid.getRoot()
+                    if(kidRoot == child):
+                        kid = None
+                        tempChild = []
+                        for kidTwo in children:
+                            if(kid != None):
+                                tempChild.append(kid)
+                        return True
+                    else:
+                        recValue = kid.removeChild(child)
+                        if(recValue == True):
+                            return True
+                elif(isinstance(kid, FileSystemObject.File)):
+                    if(kid.getPath() == child.getPath()):
+                        children.remove(kid)
+                        return True
+        return False
+        
     
     #Adds the given file to the topmost level of the tree that calls it.
     def addFile(self, file):
@@ -108,4 +161,7 @@ Tree = FSOGenerator.generateTree(TestDirectory)
 Tree.printTree()
 print("")
 Tree.addFileToDirectory(FileThree, InnerDirectory)
+Tree.printTree()
+file = Tree.removeChildByFilepath("path2")
+print("")
 Tree.printTree()

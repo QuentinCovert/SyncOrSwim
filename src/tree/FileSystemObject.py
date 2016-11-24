@@ -11,6 +11,9 @@ class FileSystemObject(metaclass=ABCMeta):
         self.encryptionOn = encrypted
         self.lastSyncTime = lastSync
 
+    def getPath(self):
+        return self.path
+    
     @abstractmethod
     def encrypt(self, crypto): pass
     
