@@ -72,7 +72,7 @@ class TreeObject:
     def findChildByFilepath(self, path):
         rootPath = self.getRoot().getPath()
         if(path == rootPath):
-            return root
+            return self.getRoot()
         else:
             children = self.getChildren()
             for kid in children:
@@ -104,11 +104,7 @@ class TreeObject:
                 if(isinstance(kid, TreeObject)):
                     kidRoot = kid.getRoot()
                     if(kidRoot == child):
-                        kid = None
-                        tempChild = []
-                        for kidTwo in children:
-                            if(kid != None):
-                                tempChild.append(kid)
+                        children.remove(kid)
                         return True
                     else:
                         recValue = kid.removeChild(child)
@@ -162,6 +158,6 @@ Tree.printTree()
 print("")
 Tree.addFileToDirectory(FileThree, InnerDirectory)
 Tree.printTree()
-file = Tree.removeChildByFilepath("path2")
+file = Tree.removeChildByFilepath("path4")
 print("")
 Tree.printTree()
