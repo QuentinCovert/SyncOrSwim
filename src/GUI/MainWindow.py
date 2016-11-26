@@ -1,7 +1,10 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+import sys
 from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import QDir, pyqtSlot, pyqtSignal, qDebug
+from EncryptLocalFile import Ui_EcryptLocalFileDialog as EncryptLocalFileDialog
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -19,7 +22,14 @@ except AttributeError:
 
 #Note: this was auto-generated so it's a little messy. It has been organzied,
 # as best I could. -Levi
-class Ui_MainWindow(object):
+class Ui_MainWindow(QtGui.QMainWindow):
+    def __init__(self):
+        super(Ui_MainWindow, self).__init__()
+        self.setupUi(self)
+
+    def getClickedFilePath(self, index):
+        qDebug("%s" % (self.currFileSysModel.filePath(index)))
+
     def setupUi(self, MainWindow):
 
         #Inital setup:
@@ -38,17 +48,26 @@ class Ui_MainWindow(object):
         #Create the GUI's menu bar:
         self.createMenuBar(MainWindow)
 
+        #Create directoryModel:
+        self.dirModel = DirectoryModel([])
+
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        #Connect signals and slots:
+        self.fileSystemView.clicked.connect(self.getClickedFilePath)
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Sync Or Swim", None))
         self.rootLabel.setText(_translate("MainWindow", "Choose Root Directory:", None))
-        self.rootDirComboBox.setItemText(0, _translate("MainWindow", "Homework", None)) #TODO: remove line. Placeholder for phase III.
+        self.groupBox.setTitle(_translate("MainWindow", "Selection Info", None))
+        self.rootDirComboBox.setItemText(0, _translate("MainWindow", "GitHub", None)) #TODO: remove line. Placeholder for phase III.
         self.ignoredTitleLabel.setText(_translate("MainWindow", "Item Ignored:", None))
-        self.ingoreOutput.setText(_translate("MainWindow", "No", None))
+        self.itemIgnoredComboBox.setItemText(0, _translate("MainWindow", "Yes", None))
+        self.itemIgnoredComboBox.setItemText(1, _translate("MainWindow", "No", None))
         self.encryptEnableTitleLabel.setText(_translate("MainWindow", "Auto-Encrypt Enabled:", None))
-        self.encryptOutput.setText(_translate("MainWindow", "Yes", None))
+        self.encryptEnableComboBox.setItemText(0, _translate("MainWindow", "Yes", None))
+        self.encryptEnableComboBox.setItemText(1, _translate("MainWindow", "No", None))
         self.lastUpatedTitleLabel.setText(_translate("MainWindow", "Last updated:", None))
         self.lastUpdatedOutput.setText(_translate("MainWindow", "11/11/2016", None))
         self.lastSyncedTitleLabel.setText(_translate("MainWindow", "Last Synced:", None))
@@ -65,6 +84,12 @@ class Ui_MainWindow(object):
         self.actionContact_Us.setText(_translate("MainWindow", "Contact Us", None))
         self.actionManage_Root_Directories.setText(_translate("MainWindow", "Manage Root Directories", None))
         self.actionExit.setText(_translate("MainWindow", "Exit", None))
+
+        self.currFileSysModel = QtGui.QFileSystemModel(self)
+        self.currFileSysModel.setFilter(QDir.AllEntries | QDir.NoDotAndDotDot | QDir.AllDirs)
+        self.currFileSysModel.setRootPath("E:\GitHub")
+        self.fileSystemView.setModel(self.currFileSysModel)
+        self.fileSystemView.setRootIndex(self.currFileSysModel.index("E:\GitHub"))
 
     def createUiLayout(self, MainWindow):
         #Create central 'vertical' GUI layout:
@@ -134,91 +159,82 @@ class Ui_MainWindow(object):
 
     #Create the optionsTableWidget:
     def createOptionsLayout(self):
-        self.formLayout = QtGui.QFormLayout()
-        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout.setLabelAlignment(QtCore.Qt.AlignCenter)
-        self.formLayout.setFormAlignment(QtCore.Qt.AlignCenter)
-        self.formLayout.setContentsMargins(5, -1, 5, -1)
-        self.formLayout.setHorizontalSpacing(20)
-        self.formLayout.setVerticalSpacing(60)
-        self.formLayout.setObjectName(_fromUtf8("formLayout"))
-
-        #Create the "Item Ignored" GUI label:
-        self.ignoredTitleLabel = QtGui.QLabel(self.centralwidget)
+        self.groupBox = QtGui.QGroupBox(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
+        self.groupBox.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.groupBox.setFont(font)
+        self.groupBox.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.groupBox.setObjectName(_fromUtf8("groupBox"))
+        self.optionsLayout = QtGui.QFormLayout(self.groupBox)
+        self.optionsLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.optionsLayout.setLabelAlignment(QtCore.Qt.AlignCenter)
+        self.optionsLayout.setFormAlignment(QtCore.Qt.AlignCenter)
+        self.optionsLayout.setMargin(20)
+        self.optionsLayout.setHorizontalSpacing(10)
+        self.optionsLayout.setVerticalSpacing(70)
+        self.optionsLayout.setObjectName(_fromUtf8("optionsLayout"))
+        self.ignoredTitleLabel = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
         self.ignoredTitleLabel.setFont(font)
         self.ignoredTitleLabel.setObjectName(_fromUtf8("ignoredTitleLabel"))
-        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.ignoredTitleLabel)
-
-        #Create a label which will output the parameter indicating if the file is ignored
-        # by the filesystem.
-        self.ingoreOutput = QtGui.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.ingoreOutput.setFont(font)
-        self.ingoreOutput.setObjectName(_fromUtf8("ingoreOutput"))
-        self.formLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.ingoreOutput)
-
-        #Create the "Auto Encrypt Enabled" GUI label:
-        self.encryptEnableTitleLabel = QtGui.QLabel(self.centralwidget)
+        self.optionsLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.ignoredTitleLabel)
+        self.itemIgnoredComboBox = QtGui.QComboBox(self.groupBox)
+        self.itemIgnoredComboBox.setObjectName(_fromUtf8("itemIgnoredComboBox"))
+        self.itemIgnoredComboBox.addItem(_fromUtf8(""))
+        self.itemIgnoredComboBox.addItem(_fromUtf8(""))
+        self.optionsLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.itemIgnoredComboBox)
+        self.encryptEnableTitleLabel = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
         self.encryptEnableTitleLabel.setFont(font)
         self.encryptEnableTitleLabel.setObjectName(_fromUtf8("encryptEnableTitleLabel"))
-        self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.encryptEnableTitleLabel)
-
-        #Create a label which will output the parameter indicating if the file will be
-        # encrypted by the encryption module.
-        self.encryptOutput = QtGui.QLabel(self.centralwidget)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.encryptOutput.setFont(font)
-        self.encryptOutput.setObjectName(_fromUtf8("encryptOutput"))
-        self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.encryptOutput)
-
-        #Create the "Last Updated" GUI label:
-        self.lastUpatedTitleLabel = QtGui.QLabel(self.centralwidget)
+        self.optionsLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.encryptEnableTitleLabel)
+        self.encryptEnableComboBox = QtGui.QComboBox(self.groupBox)
+        self.encryptEnableComboBox.setObjectName(_fromUtf8("encryptEnableComboBox"))
+        self.encryptEnableComboBox.addItem(_fromUtf8(""))
+        self.encryptEnableComboBox.addItem(_fromUtf8(""))
+        self.optionsLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.encryptEnableComboBox)
+        self.lastUpatedTitleLabel = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
         self.lastUpatedTitleLabel.setFont(font)
         self.lastUpatedTitleLabel.setObjectName(_fromUtf8("lastUpatedTitleLabel"))
-        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.lastUpatedTitleLabel)
-
-        #Create a label which will output the parameter indicating the last time a selected
-        # file/dir was changed.
-        self.lastUpdatedOutput = QtGui.QLabel(self.centralwidget)
+        self.optionsLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.lastUpatedTitleLabel)
+        self.lastUpdatedOutput = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(12)
         self.lastUpdatedOutput.setFont(font)
+        self.lastUpdatedOutput.setText(_fromUtf8(""))
         self.lastUpdatedOutput.setObjectName(_fromUtf8("lastUpdatedOutput"))
-        self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.lastUpdatedOutput)
-
-        #Create the "Last Synced" GUI label:
-        self.lastSyncedTitleLabel = QtGui.QLabel(self.centralwidget)
+        self.optionsLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.lastUpdatedOutput)
+        self.lastSyncedTitleLabel = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
         font.setWeight(75)
         self.lastSyncedTitleLabel.setFont(font)
         self.lastSyncedTitleLabel.setObjectName(_fromUtf8("lastSyncedTitleLabel"))
-        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.lastSyncedTitleLabel)
-
-        #Create a label which will output the parameter indicating the last time a selected
-        # file/dir was synced by the database module.
-        self.lastSyncedOutput = QtGui.QLabel(self.centralwidget)
+        self.optionsLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.lastSyncedTitleLabel)
+        self.lastSyncedOutput = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
         font.setPointSize(12)
         self.lastSyncedOutput.setFont(font)
+        self.lastSyncedOutput.setText(_fromUtf8(""))
         self.lastSyncedOutput.setObjectName(_fromUtf8("lastSyncedOutput"))
-        self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.lastSyncedOutput)
-        self.bottomHorizontalLayout.addLayout(self.formLayout)
+        self.optionsLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.lastSyncedOutput)
+        self.bottomHorizontalLayout.addWidget(self.groupBox)
 
     #Create the menu bar:
     def createMenuBar(self, MainWindow):
@@ -235,7 +251,7 @@ class Ui_MainWindow(object):
         self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
         MainWindow.setMenuBar(self.menubar)
 
-        #Honestly, not %100 sure what the statusbar is... It's something that was auto-generated.
+        #Create status bar
         self.statusbar = QtGui.QStatusBar(MainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         MainWindow.setStatusBar(self.statusbar)
@@ -243,6 +259,7 @@ class Ui_MainWindow(object):
         #Add actions to the File tab:
         self.actionEncrypt_Local_File = QtGui.QAction(MainWindow)
         self.actionEncrypt_Local_File.setObjectName(_fromUtf8("actionEncrypt_Local_File"))
+        self.actionEncrypt_Local_File.triggered.connect(self.encryptLocalFile)
         self.menuFile.addAction(self.actionEncrypt_Local_File)
         self.actionCreate_New_Encryption_Key = QtGui.QAction(MainWindow)
         self.actionCreate_New_Encryption_Key.setObjectName(_fromUtf8("actionCreate_New_Encryption_Key"))
@@ -277,3 +294,10 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+
+    def encryptLocalFile(self):
+        tmpFilePath = EncryptLocalFileDialog.getEncryptFilePath(self)
+        qDebug("MainWindow: return encrypt file path = %s" % tmpFilePath)
+        if len(tmpFilePath) > 0:
+            #TODO: encrypt file path points to
+            qDebug("Encrypt file....")
