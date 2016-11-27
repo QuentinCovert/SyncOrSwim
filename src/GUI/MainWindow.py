@@ -5,6 +5,8 @@ import sys
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QDir, pyqtSlot, pyqtSignal, qDebug
 from EncryptLocalFile import Ui_EcryptLocalFileDialog as EncryptLocalFileDialog
+from SetRemoteFileSystemDialog import Ui_SetRemoteFileSystemDialog as SetRemoteFileSystemDialog
+from SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncryptionOptions
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -48,9 +50,6 @@ class Ui_MainWindow(QtGui.QMainWindow):
         #Create the GUI's menu bar:
         self.createMenuBar(MainWindow)
 
-        #Create directoryModel:
-        self.dirModel = DirectoryModel([])
-
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
@@ -59,9 +58,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Sync Or Swim", None))
-        self.rootLabel.setText(_translate("MainWindow", "Choose Root Directory:", None))
+        self.rootLabel.setText(_translate("MainWindow", "Current Project:", None))
         self.groupBox.setTitle(_translate("MainWindow", "Selection Info", None))
-        self.rootDirComboBox.setItemText(0, _translate("MainWindow", "GitHub", None)) #TODO: remove line. Placeholder for phase III.
+        self.rootOutputLabel.setText(_translate("MainWindow", "GitHub", None))
         self.ignoredTitleLabel.setText(_translate("MainWindow", "Item Ignored:", None))
         self.itemIgnoredComboBox.setItemText(0, _translate("MainWindow", "Yes", None))
         self.itemIgnoredComboBox.setItemText(1, _translate("MainWindow", "No", None))
@@ -102,8 +101,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         # and a spacer.
         self.topHorizontalLayout = QtGui.QHBoxLayout()
         self.topHorizontalLayout.setObjectName(_fromUtf8("topHorizontalLayout"))
-        self.createLabel()
-        self.createComboBox()
+        self.createRootLabel()
+        self.createRootOutputLabel()
         self.createSpacer()
         self.verticalLayout.addLayout(self.topHorizontalLayout) #Finish of top layout.
 
@@ -121,7 +120,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 
     #Create root label. This is what says 'Choose Root Directory' on the GUI:
-    def createLabel(self):
+    def createRootLabel(self):
         self.rootLabel = QtGui.QLabel(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -135,16 +134,16 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     #Create the combo box which will allow users to specify which root directory
     # they wish to be working with.
-    def createComboBox(self):
-        self.rootDirComboBox = QtGui.QComboBox(self.centralwidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+    def createRootOutputLabel(self):
+        self.rootOutputLabel = QtGui.QLabel(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.rootDirComboBox.sizePolicy().hasHeightForWidth())
-        self.rootDirComboBox.setSizePolicy(sizePolicy)
-        self.rootDirComboBox.setObjectName(_fromUtf8("rootDirComboBox"))
-        self.rootDirComboBox.addItem(_fromUtf8("")) #TODO: remove line. Placeholder for phase III.
-        self.topHorizontalLayout.addWidget(self.rootDirComboBox)
+        sizePolicy.setHeightForWidth(self.rootOutputLabel.sizePolicy().hasHeightForWidth())
+        self.rootOutputLabel.setSizePolicy(sizePolicy)
+        self.rootOutputLabel.setTextFormat(QtCore.Qt.AutoText)
+        self.rootOutputLabel.setObjectName(_fromUtf8("rootOutputLabel"))
+        self.topHorizontalLayout.addWidget(self.rootOutputLabel)
 
     #This is a simple spacer item which keeps the label and combo box to the left:
     def createSpacer(self):
@@ -266,15 +265,18 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.menuFile.addAction(self.actionCreate_New_Encryption_Key)
         self.menuFile.addSeparator()
         self.actionExit = QtGui.QAction(MainWindow)
+        self.actionExit.triggered.connect(self.quitApplication)
         self.actionExit.setObjectName(_fromUtf8("actionExit"))
         self.menuFile.addAction(self.actionExit)
 
         #Add actions to Settings tab:
         self.actionSet_Remote_File_System_Target = QtGui.QAction(MainWindow)
         self.actionSet_Remote_File_System_Target.setObjectName(_fromUtf8("actionSet_Remote_File_System_Target"))
+        self.actionSet_Remote_File_System_Target.triggered.connect(self.setRemoteFileSystemTarget)
         self.menuSettings.addAction(self.actionSet_Remote_File_System_Target)
         self.actionSet_Encryption_Options = QtGui.QAction(MainWindow)
         self.actionSet_Encryption_Options.setObjectName(_fromUtf8("actionSet_Encryption_Options"))
+        self.actionSet_Encryption_Options.triggered.connect(self.setEncryptionOptions)
         self.menuSettings.addAction(self.actionSet_Encryption_Options)
         self.menuSettings.addSeparator()
         self.actionManage_Root_Directories = QtGui.QAction(MainWindow)
@@ -297,7 +299,23 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def encryptLocalFile(self):
         tmpFilePath = EncryptLocalFileDialog.getEncryptFilePath(self)
-        qDebug("MainWindow: return encrypt file path = %s" % tmpFilePath)
+        qDebug("MainWindow: returned encrypt file path = %s" % tmpFilePath)
         if len(tmpFilePath) > 0:
             #TODO: encrypt file path points to
             qDebug("Encrypt file....")
+
+    def setRemoteFileSystemTarget(self):
+        tmpFilePath = SetRemoteFileSystemDialog.getRemoteFileSystemPath(self)
+        qDebug("MainWindow: returned remote file system path = %s" % tmpFilePath)
+        if len(tmpFilePath) > 0:
+            #TODO: change settings file
+            qDebug("Set Remote File System Path....")
+
+    def setEncryptionOptions(self):
+        key, size, unit = SetEncryptionOptions.setOptions("ABCDEF", "3", "GB", self)
+        qDebug("MainWindow: returned from set encryption options: key = %s, size = %s, unit = %s" % (key, size, unit))
+
+    def quitApplication(self):
+        result = QtGui.QMessageBox.question(self, 'Exit', "Are you sure you want to exit the application?", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+        if result == QtGui.QMessageBox.Ok:
+            sys.exit()
