@@ -1,0 +1,18 @@
+Meeting
+November 21, 2016
+
+Present:
+   Cameron
+   Quentin
+   Collin
+   Mark
+   Levi
+
+Description:
+   Physical meeting. Primarily discussed the Settings file used by the program and the status of the project.
+
+Duration: 2 hours
+
+Discussion:
+- Because some global values are needed in the different modules of the program, a Settings file and cooresponding generation module is needed.
+- All modules except the GUI, the Settings, and the Remote module are complete. Then all that will be needed is the main integration.
