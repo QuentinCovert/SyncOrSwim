@@ -1,0 +1,19 @@
+Meeting:
+November 30, 2016
+
+Present:
+   Cameron
+   Quentin
+   Collin
+   Mark
+   Levi
+
+Description:
+   In-class work time. Discussed the now completed Remote and Settings module, the pieces of the GUI that is still needed, and the process of integration going from here on out.
+
+Duration: 1 hour
+
+Discussion:
+-  Remote and Settings are now ready for testing.
+-  The main loop plan has been defined and integration will be ready later today.
+-  Integration will be done on December 1st.
