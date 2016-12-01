@@ -69,18 +69,7 @@ class DirectoryObject(Base):
         def convert(self):
             return Directory(self.path, self.lastModified, self.deleted, self.toEncrypt, self.lastSync,[])
         
-        
-class GlobalSetting(Base):
-        __tablename__ = 'global_settings'
-        name = Column(String, primary_key=True)
-        value = Column(Integer)
-        enabled = Column(Boolean)
-        
-        def __init__(self, name, value, enabled):
-            self.name = name
-            self.value = value
-            self.enabled = enabled
-        
+           
 class GlobalRoots(Base):
         __tablename__ = 'global_roots'
         name = Column(String, primary_key=True)
@@ -225,33 +214,6 @@ def checkMod(checkList):
 
 
 #Settings Section
-
-def retrieve_setting(name):
-    session = Session()
-    gs = session.query(GlobalSetting).filter_by(name = name).all()
-    if(gs != None):
-        if(gs[0].value == None):
-            return gs[0].enabled
-        if(gs[0].enabled == True):
-            return gs[0].value
-    else:
-        return None
-
-def change_setting(name, value, enabled):
-    gs = GlobalSetting(name, value, enabled)
-    session = Session()
-    session.merge(gs)
-    session.commit()
-    session.close()
-    return None
-
-def retrieve_roots():
-    session = Session()
-    r = []
-    roots = session.query(GlobalRoots).all()
-    for root in roots:
-        r.append(root.name)
-    return r
 
 def insert_root(name):
     root = GlobalRoots(name)
