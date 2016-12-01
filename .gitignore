@@ -1,2 +1,4 @@
+<<<<<<< HEAD
 *.pyc
 __pycache__/
+*_tmp.py
