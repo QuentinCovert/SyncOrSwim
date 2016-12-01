@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from PyQt4 import QtCore, QtGui
-from MainWindow import Ui_MainWindow
+from lib.MainWindow import Ui_MainWindow
 
 if __name__ == "__main__":
     import sys

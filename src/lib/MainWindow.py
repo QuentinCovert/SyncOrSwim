@@ -4,9 +4,9 @@
 import sys
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QDir, pyqtSlot, pyqtSignal, qDebug
-from EncryptLocalFile import Ui_EcryptLocalFileDialog as EncryptLocalFileDialog
-from SetRemoteFileSystemDialog import Ui_SetRemoteFileSystemDialog as SetRemoteFileSystemDialog
-from SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncryptionOptions
+from lib.EncryptLocalFile import Ui_EcryptLocalFileDialog as EncryptLocalFileDialog
+from lib.SetRemoteFileSystemDialog import Ui_SetRemoteFileSystemDialog as SetRemoteFileSystemDialog
+from lib.SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncryptionOptions
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8

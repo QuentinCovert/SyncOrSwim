@@ -8,7 +8,7 @@
 
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import qDebug
-from GUIUtils import isDirPathValid, isInt
+from lib.GUIUtils import isDirPathValid, isInt
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
