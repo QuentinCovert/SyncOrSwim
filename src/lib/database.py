@@ -8,7 +8,7 @@ import os.path
 
 
 
-engine = create_engine('sqlite:///SyncOrSwimDB.db')
+engine = create_engine('sqlite:///../resources/SyncOrSwimDB.db')
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
