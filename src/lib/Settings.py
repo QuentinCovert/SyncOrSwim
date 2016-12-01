@@ -3,9 +3,9 @@ import os
 
 class Settings:
 
-    def __init__(self):
+    def __init__(self, resourcePath):
         #build settings module by readings from settings file
-        currentPath = os.path.realpath(__file__)
+        currentPath = resourcePath
         #find settings file and load settings dictionary
         with open(currentPath + "settings.p", "rb") as fp:
             data = pickle.load(fp)
@@ -28,16 +28,16 @@ class Settings:
 
 
     #static class to generate settings file
-    def generateLocalSettings(rootPath, encryptedFolder, remotePath):
+    def generateLocalSettings(resourcePath, rootPath, encryptedFolder, remotePath):
 
         data = {'rootPath': rootPath, 'encryptedFolder': encryptedFolder, 'remotePath': remotePath}
-        currentPath = os.path.realpath(__file__)
+        currentPath = resourcePath
         with open(currentPath + 'settings.p', 'wb') as fp:
             pickle.dump(data, fp)
 
-    def generateGlobalSettings(minimum_split_size, block_size, key):
+    def generateGlobalSettings(resourcePath, minimum_split_size, block_size, key):
 
         global_data = {'minimum_split_size': minimum_split_size, 'block_size': block_size, 'key': key}
-        currentPath = os.path.realpath(__file__)
+        currentPath = resourcePath
         with open(currentPath + 'global_settings.p', 'wb') as fp:
             pickle.dump(global_data, fp)
