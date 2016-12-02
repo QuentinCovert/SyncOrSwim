@@ -10,7 +10,8 @@ from lib.SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncrypt
 from lib.InitSystemDialog import Ui_initSystemDialog as InitSystemDialog
 from lib.GetAccessKeyDialog import Ui_GetAccessKeyDialog as GetAccessKeyDialog
 import lib.database as database
-import lib.FSOTreeGenerator as FSOTreeObject
+#import lib.FSOTreeGenerator as FSOTreeObject
+from lib.FSOTreeGenerator import FSOTreeGenerator
 import lib.FileSystemObject as FileSystemObject
 
 try:
@@ -315,9 +316,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     @pyqtSlot()
     def initSystem(self):
-        roots = database.pullRoots()
-        for root in roots:
-            self.tree = FSOTreeGenerator(root)
+        root = database.pullRoots()
+        self.tree = FSOTreeGenerator.generateTree(root)
         qDebug("Initalizing system.")
         syncDirPath, remoteDirPath = InitSystemDialog.initSystem(self)
         if syncDirPath is "" and remoteDirPath is "":

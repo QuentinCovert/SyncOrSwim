@@ -8,7 +8,7 @@ import os.path
 
 
 
-engine = create_engine('sqlite:///../resources/SyncOrSwimDB.db')
+engine = create_engine('sqlite:///resources/SyncOrSwimDB.db')
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
@@ -39,7 +39,7 @@ class FileObject(Base):
                 self.lastSync = args[4]
                 self.encryptedPath = args[5]
                 self.parent = args[6]
-      
+
         def convert(self):
             return File(self.path, self.lastModified, self.deleted, self.toEncrypt, self.lastSync, self.encryptedPath)
 class DirectoryObject(Base):
@@ -50,7 +50,7 @@ class DirectoryObject(Base):
         toEncrypt = Column(Boolean)
         lastSync = Column(DateTime, default=datetime.datetime.utcnow)
         parent = Column(String)
-        
+
         def __init__(self, *args):
             if(len(args)==1):
                 self.path = args[0].path
@@ -68,16 +68,16 @@ class DirectoryObject(Base):
                 self.parent = args[5]
         def convert(self):
             return Directory(self.path, self.lastModified, self.deleted, self.toEncrypt, self.lastSync,[])
-        
-           
+
+
 class GlobalRoots(Base):
         __tablename__ = 'global_roots'
         name = Column(String, primary_key=True)
-        
+
         def __init__(self, name):
             self.name = name
-      
-      
+
+
 #Files and Directories Section
 
 #Retrieve file or directory from database based on relative path
@@ -107,12 +107,12 @@ def retrieve(path1):
                         for fd in d:
                            # print(fd.path)
                             obj.files.append(retrieve(fd.path))
-                            
+
                         session.close()
                         return obj
                 else:
                         return None
-                
+
 #Retrieve file or directory, but not any subdirectories
 def fastRetrieve(path):
         session = Session()
@@ -144,7 +144,7 @@ def delete(obj1):
             for fd in obj1.files:
                 delete(fd)
             session.query(DirectoryObject).filter_by(path=path1).delete()
-        
+
         if(type(obj1) is File):
             session.query(FileObject).filter_by(path=path1).delete()
         session.commit()
@@ -155,13 +155,13 @@ def delete(obj1):
 
 #stores file or directory and all subdirectories in database, if files are new they are added, otherwise they are just modified
 def store(obj1):
-        if((type(obj1) is File) or (type(obj1) is Directory)):	
+        if((type(obj1) is File) or (type(obj1) is Directory)):
                 if(type(obj1) is Directory):
                         obj2 = DirectoryObject(obj1)
                         for fd in obj1.files:
                             #print("executed")
                             store(fd)
-                if(type(obj1) is File):	
+                if(type(obj1) is File):
                         obj2 = FileObject(obj1)
                 session = Session()
                 session.merge(obj2)
@@ -183,10 +183,10 @@ def cull():
 def pullRoots():
     session = Session()
     roots = session.query(DirectoryObject).filter_by(parent = "").all()
-	if(len(roots)==1):
+    if (len(roots)==1):
         rootObjects = (retrieve(roots[0].path))
-		return rootObjects
-	return None
+        return rootObjects
+    return None
 
 #pulls everything that is out of sync out of the database, starting from the roots
 def syncRoots():
