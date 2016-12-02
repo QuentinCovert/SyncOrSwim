@@ -20,8 +20,8 @@ def createFSO(relPath, rootAbsPath):
 
 
 path = os.path.dirname(os.path.dirname(os.getcwd()))
-root = os.path.dirname(path)
-path = os.path.relpath(path, root)
+root = path
+path = ""
 testRoot = createFSO(path, root)
 delete = testRoot.files[2]
 database.store(testRoot)
