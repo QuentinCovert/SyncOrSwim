@@ -183,11 +183,10 @@ def cull():
 def pullRoots():
     session = Session()
     roots = session.query(DirectoryObject).filter_by(parent = "").all()
-    rootObjects = []
-    print(roots)
-    for root in roots:
-        rootObjects.append(retrieve(root.path))
-    return rootObjects
+	if(len(roots)==1):
+        rootObjects = (retrieve(roots[0].path))
+		return rootObjects
+	return None
 
 #pulls everything that is out of sync out of the database, starting from the roots
 def syncRoots():
