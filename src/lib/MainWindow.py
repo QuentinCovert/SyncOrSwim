@@ -6,7 +6,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import QDir, pyqtSlot, pyqtSignal, qDebug, QTimer
 from lib.EncryptLocalFile import Ui_EcryptLocalFileDialog as EncryptLocalFileDialog
 from lib.SetRemoteFileSystemDialog import Ui_SetRemoteFileSystemDialog as SetRemoteFileSystemDialog
-from lib.SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncryptionOptions
+from lib.GenerateAccessKeyDialog import Ui_GenerateAccessKeyDialog as GenerateAccessKeyDialog
 from lib.InitSystemDialog import Ui_initSystemDialog as InitSystemDialog
 from lib.GetAccessKeyDialog import Ui_GetAccessKeyDialog as GetAccessKeyDialog
 import lib.database as database
@@ -87,7 +87,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.actionManage_Root_Directories.setText(_translate("MainWindow", "Manage Root Directories", None))
         self.actionCreate_New_Encryption_Key.setText(_translate("MainWindow", "Create New Encryption Key", None))
         self.actionSet_Remote_File_System_Target.setText(_translate("MainWindow", "Set Remote File System Target", None))
-        self.actionSet_Encryption_Options.setText(_translate("MainWindow", "Set Encryption Options", None))
+        self.actionGenerate_New_Access_Key.setText(_translate("MainWindow", "Generate New Access Key", None))
         self.actionDocumentation.setText(_translate("MainWindow", "Documentation", None))
         self.actionContact_Us.setText(_translate("MainWindow", "Contact Us", None))
         self.actionManage_Root_Directories.setText(_translate("MainWindow", "Manage Root Directories", None))
@@ -283,10 +283,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.actionSet_Remote_File_System_Target.setObjectName(_fromUtf8("actionSet_Remote_File_System_Target"))
         self.actionSet_Remote_File_System_Target.triggered.connect(self.setRemoteFileSystemTarget)
         self.menuSettings.addAction(self.actionSet_Remote_File_System_Target)
-        self.actionSet_Encryption_Options = QtGui.QAction(MainWindow)
-        self.actionSet_Encryption_Options.setObjectName(_fromUtf8("actionSet_Encryption_Options"))
-        self.actionSet_Encryption_Options.triggered.connect(self.setEncryptionOptions)
-        self.menuSettings.addAction(self.actionSet_Encryption_Options)
+        self.actionGenerate_New_Access_Key = QtGui.QAction(MainWindow)
+        self.actionGenerate_New_Access_Key.setObjectName(_fromUtf8("actionGenerate_New_Access_Key"))
+        self.actionGenerate_New_Access_Key.triggered.connect(self.generateNewAccessKey)
+        self.menuSettings.addAction(self.actionGenerate_New_Access_Key)
         self.menuSettings.addSeparator()
         self.actionManage_Root_Directories = QtGui.QAction(MainWindow)
         self.actionManage_Root_Directories.setObjectName(_fromUtf8("actionManage_Root_Directories"))
@@ -331,10 +331,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 sys.exit()
             qDebug("Init: accessKeyPath = %s" % accessKeyPath)
         else:
-            key, size, unit = SetEncryptionOptions.setOptions("ABCDEF", "3", "GB", self)
-            if key is "" and size is "" and unit is "":
+            size, unit = GenerateAccessKeyDialog.openDialog("", "", self)
+            if size is "" and unit is "":
                 sys.exit()
-            qDebug("MainWindow: returned from set encryption options: key = %s, size = %s, unit = %s" % (key, size, unit))
+            qDebug("MainWindow: returned from set encryption options: size = %s, unit = %s" % (size, unit))
 
     def encryptLocalFile(self):
         tmpFilePath = EncryptLocalFileDialog.getEncryptFilePath(self)
@@ -350,8 +350,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
             #TODO: change settings file
             qDebug("Set Remote File System Path....")
 
-    def setEncryptionOptions(self):
-        key, size, unit = SetEncryptionOptions.setOptions("ABCDEF", "3", "GB", self)
+    def generateNewAccessKey(self):
+        size, unit = SetEncryptionOptions.setOptions("3", "GB", self)
         qDebug("MainWindow: returned from set encryption options: key = %s, size = %s, unit = %s" % (key, size, unit))
 
     def quitApplication(self):
