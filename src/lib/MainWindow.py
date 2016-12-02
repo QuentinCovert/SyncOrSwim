@@ -7,6 +7,8 @@ from PyQt4.QtCore import QDir, pyqtSlot, pyqtSignal, qDebug, QTimer
 from lib.EncryptLocalFile import Ui_EcryptLocalFileDialog as EncryptLocalFileDialog
 from lib.SetRemoteFileSystemDialog import Ui_SetRemoteFileSystemDialog as SetRemoteFileSystemDialog
 from lib.SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncryptionOptions
+from lib.InitSystemDialog import Ui_initSystemDialog as InitSystemDialog
+from lib.GetAccessKeyDialog import Ui_GetAccessKeyDialog as GetAccessKeyDialog
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -310,6 +312,22 @@ class Ui_MainWindow(QtGui.QMainWindow):
     @pyqtSlot()
     def initSystem(self):
         qDebug("Initalizing system.")
+        syncDirPath, remoteDirPath = InitSystemDialog.initSystem(self)
+        if syncDirPath is "" and remoteDirPath is "":
+            sys.exit()
+        qDebug("Test: syncDirPath = %s, remoteDirPath = %s" % (syncDirPath, remoteDirPath))
+        userHasAccessKey = QtGui.QMessageBox.question(self, 'Startup Message', "Access Key is not present, do you have an existing Access Key?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        qDebug("accesskey: %d" % userHasAccessKey)
+        if userHasAccessKey == QtGui.QMessageBox.Yes:
+            accessKeyPath = GetAccessKeyDialog.getAccessKeyPath(self)
+            if accessKeyPath is "":
+                sys.exit()
+            qDebug("Init: accessKeyPath = %s" % accessKeyPath)
+        else:
+            key, size, unit = SetEncryptionOptions.setOptions("ABCDEF", "3", "GB", self)
+            if key is "" and size is "" and unit is "":
+                sys.exit()
+            qDebug("MainWindow: returned from set encryption options: key = %s, size = %s, unit = %s" % (key, size, unit))
 
     def encryptLocalFile(self):
         tmpFilePath = EncryptLocalFileDialog.getEncryptFilePath(self)

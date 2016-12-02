@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'encryptLocalFile.ui'
+# Form implementation generated from reading ui file 'GetAccessKeyDialog.ui'
 #
 # Created by: PyQt4 UI code generator 4.11.4
 #
@@ -24,30 +24,23 @@ except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
 
-class Ui_EcryptLocalFileDialog(QtGui.QDialog):
+class Ui_GetAccessKeyDialog(QtGui.QDialog):
     def __init__(self, parent = None):
-        super(Ui_EcryptLocalFileDialog, self).__init__(parent)
+        super(Ui_GetAccessKeyDialog, self).__init__(parent)
+        self.accessKey = ""
         self.setupUi(self)
 
-    def setupUi(self, EcryptLocalFileDialog):
-        EcryptLocalFileDialog.setObjectName(_fromUtf8("EcryptLocalFileDialog"))
-        EcryptLocalFileDialog.setWindowModality(QtCore.Qt.WindowModal)
-        EcryptLocalFileDialog.resize(650, 150)
-        EcryptLocalFileDialog.setMinimumSize(QtCore.QSize(650, 150))
-        icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(_fromUtf8("resources/syncOrSwimLogo.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        EcryptLocalFileDialog.setWindowIcon(icon)
-        EcryptLocalFileDialog.setModal(True)
-        self.setWindowModality(QtCore.Qt.ApplicationModal)
-        self.verticalLayout = QtGui.QVBoxLayout(EcryptLocalFileDialog)
-        self.verticalLayout.setMargin(20)
+    def setupUi(self, GetAccessKeyDialog):
+        GetAccessKeyDialog.setObjectName(_fromUtf8("Dialog"))
+        GetAccessKeyDialog.resize(650, 150)
+        GetAccessKeyDialog.setMinimumSize(QtCore.QSize(650, 150))
+        self.verticalLayout = QtGui.QVBoxLayout(GetAccessKeyDialog)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
         spacerItem = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
         self.horizontalLayout = QtGui.QHBoxLayout()
-        self.horizontalLayout.setSpacing(10)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.label = QtGui.QLabel(EcryptLocalFileDialog)
+        self.label = QtGui.QLabel(GetAccessKeyDialog)
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -55,16 +48,13 @@ class Ui_EcryptLocalFileDialog(QtGui.QDialog):
         self.label.setFont(font)
         self.label.setObjectName(_fromUtf8("label"))
         self.horizontalLayout.addWidget(self.label)
-        self.lineEdit = QtGui.QLineEdit(EcryptLocalFileDialog)
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.lineEdit.setFont(font)
-        self.lineEdit.setObjectName(_fromUtf8("lineEdit"))
-        self.horizontalLayout.addWidget(self.lineEdit)
+        self.accessKeyLineEdit = QtGui.QLineEdit(GetAccessKeyDialog)
+        self.accessKeyLineEdit.setObjectName(_fromUtf8("accessKeyLineEdit"))
+        self.horizontalLayout.addWidget(self.accessKeyLineEdit)
         self.verticalLayout.addLayout(self.horizontalLayout)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
-        self.buttonBox = QtGui.QDialogButtonBox(EcryptLocalFileDialog)
+        self.buttonBox = QtGui.QDialogButtonBox(GetAccessKeyDialog)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.button(QtGui.QDialogButtonBox.Ok).clicked.connect(self.ok_clicked)
@@ -72,32 +62,29 @@ class Ui_EcryptLocalFileDialog(QtGui.QDialog):
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.verticalLayout.addWidget(self.buttonBox)
 
-        self.retranslateUi(EcryptLocalFileDialog)
-        #self.buttonBox.button(QtGui.QDialogButtonBox.Reset).clicked.connect(foo)
+        self.retranslateUi(GetAccessKeyDialog)
+        QtCore.QMetaObject.connectSlotsByName(GetAccessKeyDialog)
 
-        QtCore.QMetaObject.connectSlotsByName(EcryptLocalFileDialog)
-
-    def retranslateUi(self, EcryptLocalFileDialog):
-        EcryptLocalFileDialog.setWindowTitle(_translate("EcryptLocalFileDialog", "Encrypt Local File", None))
-        self.label.setText(_translate("EcryptLocalFileDialog", "Local File Path: ", None))
+    def retranslateUi(self, GetAccessKeyDialog):
+        GetAccessKeyDialog.setWindowTitle(_translate("Dialog", "Dialog", None))
+        self.label.setText(_translate("Dialog", "Existing Access Key:", None))
 
     def ok_clicked(self):
-        qDebug("Encrypt Local File Path = %s" % (self.lineEdit.text()))
-        if isFilePathValid(self.lineEdit.text()):
+        qDebug("Access key file path = %s" % (self.accessKeyLineEdit.text()))
+        if isFilePathValid(self.accessKeyLineEdit.text()):
             # file exists
             self.accept()
         else:
-            QtGui.QMessageBox.warning(self, 'Error', "File path does not exist.", QtGui.QMessageBox.Ok)
+            QtGui.QMessageBox.warning(self, 'Error', "Path to Access Key does not exist.", QtGui.QMessageBox.Ok)
 
     def cancel_clicked(self):
         qDebug("Cancelled")
         self.reject()
 
-    def getEncryptFilePath(parent = None):
-        dialog = Ui_EcryptLocalFileDialog(parent)
+    def getAccessKeyPath(parent = None):
+        dialog = Ui_GetAccessKeyDialog(parent)
         result = dialog.exec_()
-        qDebug("Reached after exec_")
         if result == QtGui.QDialog.Accepted:
-            return(dialog.lineEdit.text())
+            return(dialog.accessKeyLineEdit.text())
         else:
             return("")
