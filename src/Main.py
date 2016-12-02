@@ -6,9 +6,16 @@ from lib.MainWindow import Ui_MainWindow
 from lib.Settings import Settings
 import sys
 from os import path
+from shutil import copyfile
+from lib.FileSystemObject import FileSystemObject, File
+from lib.Crypto import Crypto
+from cryptography.fernet import Fernet
+import base64
 
 global localSettingsExist
 global globalSettingsExist
+global databaseFO
+global globalCrypto
 
 #intialization code. Start by getting settings
 currentPath = path.dirname(path.realpath("__file__")) + "/"
@@ -33,8 +40,28 @@ else:
 
 if localSettingsExist and globalSettingsExist:
     global globalSettings
+    global resourcesPath
+    global databaseFO
     globalSettings = Settings(currentPath + "resources/")
-
+    globalCrypto = Crypto(globalSettings)
+    #test local database against remote
+    localDBTime = path.getmtime(resourcesPath + "SyncOrSwimDB.db")
+    remoteDBTime = path.getmtime(globalSettings.remotePath + "SyncOrSwimDB")
+    if localDBTime < remoteDBTime:
+        #local is older, download remote
+        databaseFO = File(resourcesPath + "SyncOrSwimDB.db", 0, 0, True, 0, globalSettings.remotePath + "SyncOrSwimDB")
+        copyfile(globalSettings.remotePath + "SyncOrSwimDB", globalSettings.encryptedFolder + "SyncOrSwimDB")
+        fernet = Fernet(globalSettings.key)
+        inFile = open(globalSettings.encryptedFolder + "SyncOrSwimDB", "rb")
+        outFile = open(resourcesPath + "SyncOrSwimDB.db", "wb")
+        outDataEnc = base64.urlsafe_b64encode(inFile.read())
+        outData = fernet.decrypt(outDataEnc)
+        outFile.write(outData)
+        inFile.close()
+        outFile.close()
+    else:
+        #local is newer, replace remote and upload files
+        x = 1
 print(globalSettingsExist)
 print(localSettingsExist)
 #GUI setup code
