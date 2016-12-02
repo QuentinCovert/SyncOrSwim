@@ -20,9 +20,6 @@ class FileSystemObject(metaclass=ABCMeta):
     @abstractmethod
     def decrypt(self, crypto): pass
 
-    def syncLocal(self, crypto, settings):
-        #do some stuff
-        x = 2
 
 class File(FileSystemObject):
 
@@ -30,12 +27,6 @@ class File(FileSystemObject):
         super().__init__(path, mod, deleted, encrypted, lastSync)
         self.encryptedFilePath = ePath
 
-    def encrypt(self, crypto):
-        Main.globalCrypto.decrypt(self)
-        #return encrypt(crypto, self)
-
-    def decrypt(self, crypto):
-        return decrypt(crypto, self)
 
     def printFile(self):
         print("File:")
@@ -55,16 +46,6 @@ class Directory(FileSystemObject):
 
     def addFile(self, file):
         self.files.append(file)
-
-    def encrypt(self, crypto):
-        for file in files:
-            encrypt(file, crypto)
-        return files
-
-    def decrypt(self, crypto):
-        for file in files:
-            encrypt(file, crypto)
-        return files
 
     def printDirectoryNoChildren(self):
         print("Directory:")
