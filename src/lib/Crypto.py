@@ -1,12 +1,13 @@
 from cryptography.fernet import Fernet
 import os
 import base64
+import lib.Settings
 
 
 class Crypto:
 
-    def __init__(self, crypto_key, settings):
-        self.key = crypto_key
+    def __init__(self, settings):
+        self.key = settings.key
         self.fernet = Fernet(self.key)
         self.GlobalSettings = settings
         MINIMUM_SPLIT_SIZE = self.GlobalSettings.minimum_split_size
@@ -53,6 +54,8 @@ class Crypto:
     def decrypt(self, file):
         # test if encrypted path is a file or directory. This will determine method of decryption
 
+        rootPath = self.GlobalSettings.rootPath
+        encryptedFolder = self.GlobalSettings.encryptedFolder
         if os.path.isfile(encryptedFolder + file.encryptedFilePath):
             # single encrypted file. Decrypt as normal
             inFile = open(encryptedFolder + file.encryptedFilePath, "rb")

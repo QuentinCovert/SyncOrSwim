@@ -9,6 +9,9 @@ from lib.SetRemoteFileSystemDialog import Ui_SetRemoteFileSystemDialog as SetRem
 from lib.SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncryptionOptions
 from lib.InitSystemDialog import Ui_initSystemDialog as InitSystemDialog
 from lib.GetAccessKeyDialog import Ui_GetAccessKeyDialog as GetAccessKeyDialog
+import lib.database as database
+import lib.FSOTreeGenerator as FSOTreeObject
+import lib.FileSystemObject as FileSystemObject
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -29,6 +32,7 @@ except AttributeError:
 class Ui_MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
+        self.tree = None
         self.setupUi(self)
         self.initSystem()
 
@@ -311,6 +315,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     @pyqtSlot()
     def initSystem(self):
+        roots = database.pullRoots()
+        for root in roots:
+            self.tree = FSOTreeGenerator(root)
         qDebug("Initalizing system.")
         syncDirPath, remoteDirPath = InitSystemDialog.initSystem(self)
         if syncDirPath is "" and remoteDirPath is "":
