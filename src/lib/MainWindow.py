@@ -7,6 +7,9 @@ from PyQt4.QtCore import QDir, pyqtSlot, pyqtSignal, qDebug, QTimer
 from lib.EncryptLocalFile import Ui_EcryptLocalFileDialog as EncryptLocalFileDialog
 from lib.SetRemoteFileSystemDialog import Ui_SetRemoteFileSystemDialog as SetRemoteFileSystemDialog
 from lib.SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncryptionOptions
+import database
+import FSOTreeGenerator
+import FileSystemObject
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -27,6 +30,7 @@ except AttributeError:
 class Ui_MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
+        self.tree = None
         self.setupUi(self)
         self.initSystem()
 
@@ -309,7 +313,11 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     @pyqtSlot()
     def initSystem(self):
+        roots = database.pullRoots()
+        for root in roots:
+            self.tree = FSOTreeGenerator(root)
         qDebug("Initalizing system.")
+        
 
     def encryptLocalFile(self):
         tmpFilePath = EncryptLocalFileDialog.getEncryptFilePath(self)
