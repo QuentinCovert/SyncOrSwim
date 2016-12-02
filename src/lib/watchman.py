@@ -13,28 +13,47 @@ class Watchman:
         sock_path = json.loads(sock_info)['sockname']
         return sock_path
 
-    def socketCommunicate(self, msgObj):
+    # This now sends and receives separately
+    # Sends the json message of the one (1) parameter
+    # Receives a response if no parameter is set
+    def socketCommunicate(self, msgObj = None):
         if self.sock_path is None:
             self.sock_path = self.getSocketLocation()
 
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        s.setblocking(0)
         s.connect(self.sock_path)
 
-        # Convert msgObj to JSON and send
-        # Must be utf-8 encoded
-        jsonObj = json.dumps(msgObj) + '\n'
-        s.send(jsonObj.encode())
-        data = s.recv(1024)
-        s.close
+        # Sends the request
+        # Only run if sending a message
+        if not (msgObj is None):
+            # Convert msgObj to JSON and send
+            # Must be utf-8 encoded
+            jsonObj = json.dumps(msgObj) + '\n'
+            s.send(jsonObj.encode())
 
-        response = data.decode()
-        # Check for error in response
-        responseObj = json.loads(response)
-        if 'error' in responseObj:
-            print('ERROR: ' + responseObj['error'])
+        # Receives the response
+        # Only run if not sending a message
+        data = None
+        if (msgObj is None):
+            data = s.recv(1024)
 
-        # Return the JSON formatted response
-        return response
+        s.close()
+
+        # Only run if the message received is non-empty
+        if not (data is None):
+            response = data.decode()
+
+            # Check for error in response
+            responseObj = json.loads(response)
+            if 'error' in responseObj:
+                print('ERROR: ' + responseObj['error'])
+
+            # Return the JSON formatted response
+            return response
+        else:
+            print('This data\'s empty. YEET!')      # For debugging.
+            return None
 
     def checkVersion(self):
         response = self.socketCommunicate(['version'])
