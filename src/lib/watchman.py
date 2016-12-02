@@ -21,7 +21,7 @@ class Watchman:
             self.sock_path = self.getSocketLocation()
 
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        s.setblocking(0)
+        s.setblocking(False)
         s.connect(self.sock_path)
 
         # Sends the request
@@ -44,21 +44,25 @@ class Watchman:
         if not (data is None):
             response = data.decode()
 
-            # Check for error in response
-            responseObj = json.loads(response)
-            if 'error' in responseObj:
-                print('ERROR: ' + responseObj['error'])
+            if len(response) != 0:
+                responseObj = json.loads(response)
 
-            # Return the JSON formatted response
-            return response
+                # Check for error in response
+                if 'error' in responseObj:
+                    print('ERROR: ' + responseObj['error'])
+
+                # Return as object
+                return responseObj
+
+            else:
+                print('This data\'s empty. YEET!')      # For debugging.
+                return None
         else:
             print('This data\'s empty. YEET!')      # For debugging.
             return None
 
     def checkVersion(self):
-        response = self.socketCommunicate(['version'])
-        version = json.loads(response)['version']
-        return version
+        self.socketCommunicate(['version'])
 
     def fileListToExpression(self, files_list):
         # Pass in a list of files/directories (string)
@@ -99,22 +103,16 @@ class Watchman:
 
         subRequest = ['subscribe', path_to_root, subscription_name, expression]
 
-        response = self.socketCommunicate(subRequest)
-        subResponse = json.loads(response)
-        return subResponse
+        self.socketCommunicate(subRequest)
 
     def unsubscribe(self, path_to_root, subscription_name):
         unsubRequest = ['unsubscribe', path_to_root, subscription_name]
-        response = self.socketCommunicate(unsubRequest)
-        unsubResponse = json.loads(response)
-        return unsubResponse
+        self.socketCommunicate(unsubRequest)
 
     def clock(self, path_to_root):
         # Returns current clock_spec for the watched root
         clockRequest = ['clock', path_to_root]
-        response = self.socketCommunicate(clockRequest)
-        clock = json.loads(response)['clock']
-        return clock
+        self.socketCommunicate(clockRequest)
 
     def since(self, path_to_root, clock_spec, ignore_files_list = None):
         sinceObj = {'since': clock_spec, 'expression': ['allof', ['anyof', ['type', 'f'], ['type', 'd']]]}
@@ -127,6 +125,4 @@ class Watchman:
 
         sinceRequest = ['query', path_to_root, sinceObj]
 
-        response = self.socketCommunicate(sinceRequest)
-        result = json.loads(response)
-        return result
+        self.socketCommunicate(sinceRequest)

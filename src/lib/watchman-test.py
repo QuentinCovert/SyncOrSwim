@@ -27,12 +27,17 @@ else:
     # unsubResult = watch.unsubscribe(rootPath, subscriptionName)
     # print(unsubResult)
 
-    print('Checking clock:')
-    clock = watch.clock(rootPath)
-    print(clock)
+    # print('Checking clock:')
+    # watch.clock(rootPath)
 
     if not (clockSpec is None):
-        print('\nGetting changed files:')
+        print('Getting changed files:')
         # The third argument is optional
-        result = watch.since(rootPath, clockSpec, ['**/*.txt'])
-        print(json.dumps(result, indent = 4))
+        watch.since(rootPath, clockSpec, ['**/*.txt'])
+
+
+    print('\n====Reading from the socket====\n')
+    response = watch.socketCommunicate()
+
+    if not (response is None):
+        print(json.dumps(response, indent = 4))
