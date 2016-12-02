@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-from lib.remote import Remote
 
 class FileSystemObject(metaclass=ABCMeta):
 
@@ -23,6 +22,7 @@ class FileSystemObject(metaclass=ABCMeta):
 
     def syncLocal(self, crypto, settings):
         #do some stuff
+        x = 2
 
 class File(FileSystemObject):
 

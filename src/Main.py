@@ -17,6 +17,8 @@ global localSettingsExist
 global globalSettingsExist
 global databaseFO
 global globalCrypto
+global currentPath
+global resourcesPath
 
 #intialization code. Start by getting settings
 currentPath = path.dirname(path.realpath("__file__")) + "/"
@@ -62,7 +64,7 @@ if localSettingsExist and globalSettingsExist:
         outFile.close()
         #compare files
         rootDirectory = database.pullRoots()
-        
+
     else:
         #local is newer, replace remote and upload files
         x = 1
@@ -74,7 +76,7 @@ print(localSettingsExist)
 #GUI setup code
 app = QtGui.QApplication(sys.argv)
 MainWindow = QtGui.QMainWindow()
-ui = Ui_MainWindow()
+ui = Ui_MainWindow(currentPath, resourcesPath, localSettingsExist, globalSettingsExist)
 ui.setupUi(MainWindow)
 MainWindow.show()
 sys.exit(app.exec_())

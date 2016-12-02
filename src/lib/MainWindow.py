@@ -13,6 +13,9 @@ import lib.database as database
 #import lib.FSOTreeGenerator as FSOTreeObject
 from lib.FSOTreeGenerator import FSOTreeGenerator
 import lib.FileSystemObject as FileSystemObject
+from lib.Settings import Settings
+from lib.Crypto import Crypto
+from shutil import copyfile
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -31,10 +34,14 @@ except AttributeError:
 #Note: this was auto-generated so it's a little messy. It has been organzied,
 # as best I could. -Levi
 class Ui_MainWindow(QtGui.QMainWindow):
-    def __init__(self):
+    def __init__(self, currentPath, resourcesPath, localSettingsExist, globalSettingsExist):
         super(Ui_MainWindow, self).__init__()
         self.tree = None
         self.setupUi(self)
+        self.currentPath = currentPath
+        self.resourcesPath = resourcesPath
+        self.localSettingsExist = localSettingsExist
+        self.globalSettingsExist = globalSettingsExist
         self.initSystem()
 
 
@@ -319,22 +326,40 @@ class Ui_MainWindow(QtGui.QMainWindow):
         root = database.pullRoots()
         self.tree = FSOTreeGenerator.generateTree(root)
         qDebug("Initalizing system.")
-        syncDirPath, remoteDirPath = InitSystemDialog.initSystem(self)
-        if syncDirPath is "" and remoteDirPath is "":
-            sys.exit()
-        qDebug("Test: syncDirPath = %s, remoteDirPath = %s" % (syncDirPath, remoteDirPath))
-        userHasAccessKey = QtGui.QMessageBox.question(self, 'Startup Message', "Access Key is not present, do you have an existing Access Key?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-        qDebug("accesskey: %d" % userHasAccessKey)
-        if userHasAccessKey == QtGui.QMessageBox.Yes:
-            accessKeyPath = GetAccessKeyDialog.getAccessKeyPath(self)
-            if accessKeyPath is "":
+        #if the user does not have local settings file, initialize it
+        if self.localSettingsExist == False:
+            syncDirPath, remoteDirPath = InitSystemDialog.initSystem(self)
+            if syncDirPath is "" and remoteDirPath is "":
                 sys.exit()
-            qDebug("Init: accessKeyPath = %s" % accessKeyPath)
-        else:
-            size, unit = GenerateAccessKeyDialog.openDialog("", "", self)
-            if size is "" and unit is "":
-                sys.exit()
-            qDebug("MainWindow: returned from set encryption options: size = %s, unit = %s" % (size, unit))
+            encDir = self.currentPath + "enc/"
+            Settings.generateLocalSettings(self.resourcesPath, syncDirPath, encDir, remoteDirPath)
+            qDebug("Test: syncDirPath = %s, remoteDirPath = %s" % (syncDirPath, remoteDirPath))
+        #test if global settings is present
+        if self.globalSettingsExist == False:
+            userHasAccessKey = QtGui.QMessageBox.question(self, 'Startup Message', "Access Key is not present, do you have an existing Access Key?", QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+            qDebug("accesskey: %d" % userHasAccessKey)
+            if userHasAccessKey == QtGui.QMessageBox.Yes:
+                accessKeyPath = GetAccessKeyDialog.getAccessKeyPath(self)
+                if accessKeyPath is "":
+                    sys.exit()
+                qDebug("Init: accessKeyPath = %s" % accessKeyPath)
+                #copy settings file into system
+                dst = self.resourcesPath + "global_settings.p"
+                copyfile(accessKeyPath, dst)
+                #TODO: get database and shit
+            else:
+                size, unit = GenerateAccessKeyDialog.openDialog("", "", self)
+                if size is "" and unit is "":
+                    sys.exit()
+                qDebug("MainWindow: returned from set encryption options: size = %s, unit = %s" % (size, unit))
+                #convert size and unit to bytes
+                if unit == 'Mb':
+                    sizeBytes = int(size) * 1000000
+                else:
+                    sizeBytes = int(size) * 1000000000
+                #generate settings file
+                key = Crypto.generateKey()
+                Settings.generateGlobalSettings(self.resourcesPath, sizeBytes, 10000000, key)
 
     def encryptLocalFile(self):
         tmpFilePath = EncryptLocalFileDialog.getEncryptFilePath(self)
@@ -358,3 +383,5 @@ class Ui_MainWindow(QtGui.QMainWindow):
         result = QtGui.QMessageBox.question(self, 'Exit', "Are you sure you want to exit the application?", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
         if result == QtGui.QMessageBox.Ok:
             sys.exit()
+
+

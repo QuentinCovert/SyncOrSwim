@@ -26,7 +26,7 @@ except AttributeError:
 
 class Ui_GenerateAccessKeyDialog(QtGui.QDialog):
     def __init__(self, defaultAutoMaxEncryptSize, defaultSizeUnit, parent = None):
-        super(Ui_SetEncryptionOptionsDialog, self).__init__(parent)
+        super(Ui_GenerateAccessKeyDialog, self).__init__(parent)
         self.maxAutoEncryptSize = defaultAutoMaxEncryptSize
         self.sizeUnit = defaultSizeUnit
         self.setupUi(self)
@@ -93,7 +93,7 @@ class Ui_GenerateAccessKeyDialog(QtGui.QDialog):
         self.sizeUnitcomboBox.setItemText(0, _translate("SetEncryptionOptionsDialog", "Select", None))
         self.sizeUnitcomboBox.setItemText(1, _translate("SetEncryptionOptionsDialog", "GB", None))
         self.sizeUnitcomboBox.setItemText(2, _translate("SetEncryptionOptionsDialog", "MB", None))
-        if self.maxAutoEncryptSize is not "" and self.maxAutoEncryptSize is not None
+        if self.maxAutoEncryptSize is not "" and self.maxAutoEncryptSize is not None:
             self.maxSizeLlineEdit.setText(self.maxAutoEncryptSize)
         else:
             self.maxSizeLlineEdit.setText("")

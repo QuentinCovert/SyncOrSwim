@@ -1,5 +1,5 @@
-from FileSystemObject import FileSystemObject, File, Directory
-from os
+from lib.FileSystemObject import FileSystemObject, File, Directory
+import os
 from shutil import copytree, copyfile, rmtree
 
 #NOTE: encryptedFilePath MUST be a relative path. I need a way to get the absolute path
@@ -62,7 +62,7 @@ class Remote:
                 #not encrypted, just copy straight to destination
                 dst = rootPath + fileSO.path
                 copyfile(self.location + fileSO.path, dst)
-            elif isinstance(fileSO, Directory):
-                #it's a directory, iterate over all children
-                for file in fileSO.files:
-                    self.pull(file)
+        elif isinstance(fileSO, Directory):
+            #it's a directory, iterate over all children
+            for file in fileSO.files:
+                self.pull(file)
