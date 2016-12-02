@@ -3,7 +3,7 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import QDir, pyqtSlot, pyqtSignal, qDebug
+from PyQt4.QtCore import QDir, pyqtSlot, pyqtSignal, qDebug, QTimer
 from lib.EncryptLocalFile import Ui_EcryptLocalFileDialog as EncryptLocalFileDialog
 from lib.SetRemoteFileSystemDialog import Ui_SetRemoteFileSystemDialog as SetRemoteFileSystemDialog
 from lib.SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncryptionOptions
@@ -28,6 +28,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
     def __init__(self):
         super(Ui_MainWindow, self).__init__()
         self.setupUi(self)
+        self.initSystem()
+
 
     def getClickedFilePath(self, index):
         qDebug("%s" % (self.currFileSysModel.filePath(index)))
@@ -296,6 +298,18 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+
+    #Taken from: http://stackoverflow.com/questions/21079941/how-can-i-kill-a-single-shot-qtcore-qtimer-in-pyqt4
+    def startInitTimer(self):
+        self.initTimer = QTimer(self)
+        self.initTimer.deleteLater()
+        self.initTimer.timeout.connect(self.initSystem)
+        self.initTimer.setSingleShot(True)
+        self.initTimer.start(100)
+
+    @pyqtSlot()
+    def initSystem(self):
+        qDebug("Initalizing system.")
 
     def encryptLocalFile(self):
         tmpFilePath = EncryptLocalFileDialog.getEncryptFilePath(self)
