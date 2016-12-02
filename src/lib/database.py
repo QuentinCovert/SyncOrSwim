@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Column, Integer, Boolean, String, DateTime
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 import datetime
-from FileSystemObject import File, Directory
+from lib.FileSystemObject import File, Directory
 import os.path
 
 

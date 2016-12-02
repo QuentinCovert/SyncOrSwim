@@ -1,5 +1,5 @@
 import types
-import FileSystemObject
+import lib.FileSystemObject as FileSystermObject
 
 class FSOTreeGenerator:
     

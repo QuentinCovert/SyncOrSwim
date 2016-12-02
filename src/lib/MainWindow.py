@@ -7,9 +7,9 @@ from PyQt4.QtCore import QDir, pyqtSlot, pyqtSignal, qDebug, QTimer
 from lib.EncryptLocalFile import Ui_EcryptLocalFileDialog as EncryptLocalFileDialog
 from lib.SetRemoteFileSystemDialog import Ui_SetRemoteFileSystemDialog as SetRemoteFileSystemDialog
 from lib.SetEncryptionOptions import Ui_SetEncryptionOptionsDialog as SetEncryptionOptions
-import database
-import FSOTreeGenerator
-import FileSystemObject
+import lib.database as database
+import lib.FSOTreeGenerator as FSOTreeObject
+import lib.FileSystemObject as FileSystemObject
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
