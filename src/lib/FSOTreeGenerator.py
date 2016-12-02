@@ -1,23 +1,23 @@
 import types
-import lib.FileSystemObject as FileSystermObject
+from lib.FileSystemObject import FileSystemObject, File, Directory
 
 class FSOTreeGenerator:
-    
-    def generateTree(self, root):
+
+    def generateTree(root):
         tree = TreeObject(root)
-        
-        if(isinstance(root, FileSystemObject.File)):
+
+        if(isinstance(root, File)):
             return tree
-            
-        elif(isinstance(root, FileSystemObject.Directory)):
+
+        elif(isinstance(root, Directory)):
             for file in root:
-                if(isinstance(file, FileSystemObject.File)):
+                if(isinstance(file, File)):
                     tree.children.append(file)
-                elif(isinstance(file, FileSystemObject.Directory)):
-                    subTree = self.generateTree(file)
+                elif(isinstance(file, Directory)):
+                    subTree = FSOTreeGenerator.generateTree(file)
                     tree.children.append(subTree)
             return tree
-            
+
         return tree
 
 class TreeObject:
@@ -26,13 +26,13 @@ class TreeObject:
     def __init__(self, root):
         self.root = root
         self.children = []
-        
+
     def getRoot(self):
         return self.root
-        
+
     def getChildren(self):
         return self.children
-        
+
     #Adds the given file to the given directory (represented as a TreeObject) in the tree that calls it.
     def addFileToDirectory(self, file, directory):
         if(self.root == directory):
@@ -45,7 +45,7 @@ class TreeObject:
                 bool = child.findChild(directory)
                 if(bool != False):
                     child.addFileToDirectory(file, directory)
-                
+
 
     #Returns the given child if it is found. False otherwise.
     def findChild(self, child):
@@ -67,7 +67,7 @@ class TreeObject:
                     if(child == kid):
                         return kid
         return False
-        
+
     #Finds and returns the child which has the given filepath. False if it cannot be found.
     def findChildByFilepath(self, path):
         rootPath = self.getRoot().getPath()
@@ -89,10 +89,10 @@ class TreeObject:
                     if(kidPath == path):
                         return kid
         return False
-        
+
     def removeChildByFilepath(self, path):
         self.removeChild(self.findChildByFilepath(path))
-    
+
     def removeChild(self, child):
         root = self.getRoot()
         if(child == root):
@@ -115,8 +115,8 @@ class TreeObject:
                         children.remove(kid)
                         return True
         return False
-        
-    
+
+
     #Adds the given file to the topmost level of the tree that calls it.
     def addFile(self, file):
         if(isinstance(self.root, FileSystemObject.File)):
@@ -130,9 +130,9 @@ class TreeObject:
                 subTree = FSOGenerator.generateTree(file)
                 self.children.append(subTree)
             return True
-            
+
         return False
-        
+
     def printTree(self):
         if(isinstance(self.root, FileSystemObject.File)):
             print("File:")
