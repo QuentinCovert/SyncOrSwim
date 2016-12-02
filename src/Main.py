@@ -11,6 +11,7 @@ from lib.FileSystemObject import FileSystemObject, File
 from lib.Crypto import Crypto
 from cryptography.fernet import Fernet
 import base64
+import lib.database
 
 global localSettingsExist
 global globalSettingsExist
@@ -59,9 +60,15 @@ if localSettingsExist and globalSettingsExist:
         outFile.write(outData)
         inFile.close()
         outFile.close()
+        #compare files
+        rootDirectory = database.pullRoots()
+        
     else:
         #local is newer, replace remote and upload files
         x = 1
+        #rootDirectory = lib.database.pullRoots()
+        #print(rootDirectory.files[0].path)
+
 print(globalSettingsExist)
 print(localSettingsExist)
 #GUI setup code
