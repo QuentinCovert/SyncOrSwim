@@ -1,4 +1,4 @@
-<img src="src/logo/syncOrSwimLogo.png" width="200px" height="200px" alt="SyncOrSwimLogo" />
+<img src="src/resources/syncOrSwimLogo.png" width="200px" height="200px" alt="SyncOrSwimLogo" />
 
 # SyncOrSwim
 A simple, fast, and secure file syncing application. SyncOrSwim seeks to solve a number of problems in existing file syncing applications: the lack of support for end-to-end encryption controlled locally by the user and the lack of control of where the file is placed remotely.
@@ -8,11 +8,11 @@ We will be using the Chrome extension ZenHub to create and manage issue tracking
 
 In order to utilize ZenHub, we primarily work/contribute to this git repository on GitHub at [QuentinCovert/SyncOrSwim](https://github.com/QuentinCovert/SyncOrSwim).
 
-## Installation
-TODO: Describe the installation process
-
 ## Usage
-TODO: Write usage instructions
+1. Unzip the SyncOrSwim folder, available at (blah).
+2. Install SQLAlchemy3.4, PyQt4, and Watchman. These can be found at: http://www.sqlalchemy.org/download.html, https://sourceforge.net/projects/pyqt/, and https://github.com/facebook/watchman/tree/master/python.
+3. Using Python 3.4.1, execute the Main module with the following command: Path\To\Python34\PythonApplication main.py 
+4. Follow the on-screen instructions to begin syncing files.
 
 ## Repository Structure
 - Diagrams
@@ -28,11 +28,8 @@ TODO: Write usage instructions
 1. Clone repo to local computer using `git clone`.
 2. If adding or editing files in the `docs` directory, just make commits in the `master` branch.
 3. If adding or changing a feature, create a new branch with the following naming convention: `issue#_briefdesc_branch`.
-4. ` git checkout` into the new branch and make the commits there, instead of the `master` branch.
+4. `git checkout` into the new branch and make the commits there, instead of the `master` branch.
 5. When the code is stable and clean, make a pull request into `master` branch for code review.
-
-## History
-TODO: Write history
 
 ## Contributors
 * Levi Amen
