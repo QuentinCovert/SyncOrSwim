@@ -137,6 +137,9 @@ class Watchman:
                 exists = file["exists"]
 
                 if new == True:
+                    #test if file still exists
+                    if os.path.exists(self.rootPath + name) == False:
+                        return
                     qDebug("New file added.")
                     #create file object
                     randomName = random.randint(1, 1000000)
@@ -145,7 +148,7 @@ class Watchman:
                         randomName = random.randint(1, 1000000)
                     modTime = datetime.fromtimestamp(os.path.getmtime(self.rootPath + name))
                     myFile = File(name, modTime, 0, 1, datetime.today(), randomName)
-                    #lib.database.store(myFile)      
+                    #lib.database.store(myFile)
                     self.rootDirectory.store(myFile)
                     lib.database.store(self.rootDirectory)
                     self.crypto.encrypt(myFile)
@@ -156,13 +159,14 @@ class Watchman:
                     fileObject = self.rootDirectory.retrieve(name)
                     self.crypto.encrypt(fileObject)
                     self.remote.push(fileObject)
-                    fileObject.lastModified = os.path.getmtime(self.rootPath + name)
+                    fileObject.lastModified = datetime.fromtimestamp(os.path.getmtime(self.rootPath + name))
                     lib.database.store(fileObject)
                 else:
                     qDebug("Deleted file.")
                     #file was deleted
                     fileObject = self.rootDirectory.retrieve(name)
-                    fileObject.deleted = True
+                    fileObject.lastModified = datetime.now()
+                    fileObject.fileDeleted = 1
                     lib.database.store(fileObject)
             read, write, err = select.select(readList, [], [], 0)
         qDebug("Exiting busy loop")
