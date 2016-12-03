@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-
+import os
 class FileSystemObject(metaclass=ABCMeta):
 
     __metaclass__ = ABCMeta
@@ -65,7 +65,6 @@ class Directory(FileSystemObject):
              self.files = fd.files
              return None
         else:
-            #for i in range(len(self.files)):
             for file in self.files:
                 if(file.path == path):
                     file.lastModified = fd.lastModified
@@ -77,10 +76,25 @@ class Directory(FileSystemObject):
                 if(fd.path.startswith(self.path)):
                     file.store(fd)
                     return None
-            #if directory doesn't exist, create next directory and continue
-            path = self.path + (os.path.relpath(path,bar).split('/')[0])
-            self.files.insert(0, Directory(path, fd.lastModified, fd.fileDeleted, fd.encryptionOn, fd.lastSyncTime, []))
-            self.files[0].store(fd)
+            #if directory doesn't exist, create next directory and continues
+            #print("fd path: " + fd.path)
+            rel = os.path.relpath(fd.path, self.path)
+            if(self.path == ""):
+                rel = fd.path[1:]
+            #print("rel: " + rel)
+            split = rel.split('/')
+            if(len(split) == 1):             #if there are no more subdirectories, insert the file
+                #print("inserted file, no more subdirectories")
+                self.files.append(fd)
+            else:                            #create another subdirectory
+                #print("insert subdirectories")
+                path = self.path + "/" + rel.split('/')[0]
+                #print("self.path: " + self.path)
+                #print(rel.split('/'))
+                #print(path)
+                self.files.insert(0, Directory(path, fd.lastModified, fd.fileDeleted, fd.encryptionOn, fd.lastSyncTime, []))
+                #print(self.files[0].path)
+                self.files[0].store(fd)
             return None
 
 

@@ -145,7 +145,9 @@ class Watchman:
                         randomName = random.randint(1, 1000000)
                     modTime = datetime.fromtimestamp(os.path.getmtime(self.rootPath + name))
                     myFile = File(name, modTime, 0, 1, datetime.today(), randomName)
-                    lib.database.store(myFile)
+                    #lib.database.store(myFile)      
+                    self.rootDirectory.store(myFile)
+                    lib.database.store(self.rootDirectory)
                     self.crypto.encrypt(myFile)
                     self.remote.push(myFile)
                 elif exists == True:
