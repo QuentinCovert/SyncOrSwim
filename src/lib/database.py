@@ -186,7 +186,13 @@ def pullRoots():
     if (len(roots)==1):
         rootObjects = (retrieve(roots[0].path))
         return rootObjects
-    return None
+    else:
+        root = Directory("", datetime.datetime.now(), False, False, None, [])
+        rootObject = DirectoryObject(root)
+        session.merge(rootObject)
+        session.commit()
+        session.close()
+        return root
 
 #pulls everything that is out of sync out of the database, starting from the roots
 def syncRoots():
