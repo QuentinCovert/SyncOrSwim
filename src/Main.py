@@ -65,11 +65,19 @@ if localSettingsExist and globalSettingsExist:
         #compare files
         rootDirectory = lib.database.pullRoots()
 
-    else:
+    elif localDBTime > remoteDBTime:
         #local is newer, replace remote and upload files
-        x = 1
-        #rootDirectory = lib.database.pullRoots()
-        #print(rootDirectory.files[0].path)
+        databaseFO = File(resourcesPath + "SyncOrSwimDB.db", 0, 0, True, 0, globalSettings.remotePath + "SyncOrSwimDB")
+        fernet = Fernet(globalSettings.key)
+        inFile = open(resourcesPath + "SyncOrSwimDB.db", "rb")
+        outFile = open(globalSettings.encryptedFolder + "SyncOrSwimDB", "wb")
+        outData = fernet.encrypt(inFile.read())
+        outDataEnc = base64.urlsafe_b64decode(outData)
+        outFile.write(outDataEnc)
+        inFile.close()
+        outFile.close()
+        rootDirectory = lib.database.pullRoots()
+
 
 print(globalSettingsExist)
 print(localSettingsExist)
