@@ -58,7 +58,7 @@ class Directory(FileSystemObject):
 
     def store(self, fd):
         if(fd.path[0] != '/'):
-            fd.path.insert(0,'/')
+            fd.path = '/' + fd.path
         if(fd.path == self.path):
              self.lastModified = fd.lastModified
              self.fileDeleted = fd.fileDeleted
