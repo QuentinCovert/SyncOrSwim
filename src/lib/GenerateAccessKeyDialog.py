@@ -87,7 +87,7 @@ class Ui_GenerateAccessKeyDialog(QtGui.QDialog):
         QtCore.QMetaObject.connectSlotsByName(GenerateAccessKeyDialog)
 
     def retranslateUi(self, GenerateAccessKeyDialog):
-        GenerateAccessKeyDialog.setWindowTitle(_translate("GenerateAccessKeyDialog", "Dialog", None))
+        GenerateAccessKeyDialog.setWindowTitle(_translate("GenerateAccessKeyDialog", "Generate New Access Key", None))
         self.infoLabel.setText(_translate("GenerateAccessKeyDialog", "Due to system restrictions, SyncOrSwim can not encrypt files larger than available RAM on a system in one chunk. To address this issue, SyncOrSwim will break files that exceed this limit into smaller chunks. Thus, it is suggested to set the maximum file size to one fourth of your system\'s RAM.", None))
         self.setMaxAutoEncryptSizeLabel.setText(_translate("GenerateAccessKeyDialog", "Set Max File Size to Load into RAM:", None))
         self.sizeUnitcomboBox.setItemText(0, _translate("SetEncryptionOptionsDialog", "Select", None))

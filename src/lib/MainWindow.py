@@ -10,6 +10,7 @@ from lib.GenerateAccessKeyDialog import Ui_GenerateAccessKeyDialog as GenerateAc
 from lib.InitSystemDialog import Ui_initSystemDialog as InitSystemDialog
 from lib.GetAccessKeyDialog import Ui_GetAccessKeyDialog as GetAccessKeyDialog
 import lib.database as database
+from lib.Settings import Settings
 #import lib.FSOTreeGenerator as FSOTreeObject
 from lib.FSOTreeGenerator import FSOTreeGenerator
 import lib.FileSystemObject as FileSystemObject
@@ -37,12 +38,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
     def __init__(self, currentPath, resourcesPath, localSettingsExist, globalSettingsExist):
         super(Ui_MainWindow, self).__init__()
         self.tree = None
-        self.setupUi(self)
         self.currentPath = currentPath
         self.resourcesPath = resourcesPath
+        self.settings = None
         self.localSettingsExist = localSettingsExist
         self.globalSettingsExist = globalSettingsExist
         self.initSystem()
+        self.setupUi(self)
+        self.startBusyLoop()
 
 
     def getClickedFilePath(self, index):
@@ -74,9 +77,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "Sync Or Swim", None))
-        self.rootLabel.setText(_translate("MainWindow", "Current Project:", None))
+        self.rootLabel.setText(_translate("MainWindow", "Welcome to SyncOrSwim UI!", None))
         self.groupBox.setTitle(_translate("MainWindow", "Selection Info", None))
-        self.rootOutputLabel.setText(_translate("MainWindow", "GitHub", None))
+        self.rootOutputLabel.setText(_translate("MainWindow", "", None))
         self.ignoredTitleLabel.setText(_translate("MainWindow", "Item Ignored:", None))
         self.itemIgnoredComboBox.setItemText(0, _translate("MainWindow", "Yes", None))
         self.itemIgnoredComboBox.setItemText(1, _translate("MainWindow", "No", None))
@@ -87,6 +90,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.lastUpdatedOutput.setText(_translate("MainWindow", "11/11/2016", None))
         self.lastSyncedTitleLabel.setText(_translate("MainWindow", "Last Synced:", None))
         self.lastSyncedOutput.setText(_translate("MainWindow", "11/11/2016", None))
+
+        '''
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
         self.menuSettings.setTitle(_translate("MainWindow", "Settings", None))
         self.menuHelp.setTitle(_translate("MainWindow", "Help", None))
@@ -99,12 +104,13 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.actionContact_Us.setText(_translate("MainWindow", "Contact Us", None))
         self.actionManage_Root_Directories.setText(_translate("MainWindow", "Manage Root Directories", None))
         self.actionExit.setText(_translate("MainWindow", "Exit", None))
+        '''
 
         self.currFileSysModel = QtGui.QFileSystemModel(self)
         self.currFileSysModel.setFilter(QDir.AllEntries | QDir.NoDotAndDotDot | QDir.AllDirs)
-        self.currFileSysModel.setRootPath("E:\GitHub")
+        self.currFileSysModel.setRootPath(self.settings.rootPath)
         self.fileSystemView.setModel(self.currFileSysModel)
-        self.fileSystemView.setRootIndex(self.currFileSysModel.index("E:\GitHub"))
+        self.fileSystemView.setRootIndex(self.currFileSysModel.index(self.settings.rootPath))
 
     def createUiLayout(self, MainWindow):
         #Create central 'vertical' GUI layout:
@@ -253,11 +259,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     #Create the menu bar:
     def createMenuBar(self, MainWindow):
+        '''
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1060, 26))
         self.menubar.setObjectName(_fromUtf8("menubar"))
 
-        #Create the menu bar's tabs:
+        Create the menu bar's tabs:
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
         self.menuSettings = QtGui.QMenu(self.menubar)
@@ -312,16 +319,18 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+        '''
 
     #Taken from: http://stackoverflow.com/questions/21079941/how-can-i-kill-a-single-shot-qtcore-qtimer-in-pyqt4
-    def startInitTimer(self):
-        self.initTimer = QTimer(self)
-        self.initTimer.deleteLater()
-        self.initTimer.timeout.connect(self.initSystem)
-        self.initTimer.setSingleShot(True)
-        self.initTimer.start(100)
+    def startBusyLoop(self):
+        self.busyLoopTimer = QTimer(self)
+        self.busyLoopTimer.timeout.connect(self.busyLoop)
+        self.busyLoopTimer.start(2000)
 
-    @pyqtSlot()
+    def busyLoop(self):
+        #Do busy loop work here
+        qDebug("Busy loop triggered.")
+
     def initSystem(self):
         root = database.pullRoots()
         self.tree = FSOTreeGenerator.generateTree(root)
@@ -361,6 +370,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 key = Crypto.generateKey()
                 Settings.generateGlobalSettings(self.resourcesPath, sizeBytes, 10000000, key)
 
+        #Settings are now created, or proven to exist. Now load them into GUI:
+        self.settings = Settings(self.resourcesPath)
+
     def encryptLocalFile(self):
         tmpFilePath = EncryptLocalFileDialog.getEncryptFilePath(self)
         qDebug("MainWindow: returned encrypt file path = %s" % tmpFilePath)
@@ -383,5 +395,3 @@ class Ui_MainWindow(QtGui.QMainWindow):
         result = QtGui.QMessageBox.question(self, 'Exit', "Are you sure you want to exit the application?", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
         if result == QtGui.QMessageBox.Ok:
             sys.exit()
-
-
