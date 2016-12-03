@@ -18,6 +18,12 @@ CREATE TABLE directories (
     "lastSync" DATETIME,
     "parent" TEXT
 );
+CREATE TABLE ignored_files (
+    "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
+);
+CREATE TABLE deleted_files (
+    "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
+);
 CREATE TABLE global_roots(
     "root" TEXT PRIMARY KEY NOT NULL UNIQUE
 );
