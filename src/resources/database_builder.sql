@@ -24,7 +24,4 @@ CREATE TABLE ignored_files (
 CREATE TABLE deleted_files (
     "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
 );
-CREATE TABLE global_roots(
-    "root" TEXT PRIMARY KEY NOT NULL UNIQUE
-);
 .exit
