@@ -44,6 +44,14 @@ class Directory(FileSystemObject):
     def printDirectoryNoChildren(self):
         print("Directory:")
         print(self.path)
+        
+    def setEncrypt(e):
+        self.encryptionOn = e
+        for file in self.files:
+            if(type(file) is File):
+                file.encryptionOn = e
+            else:
+                file.setEncrypt(e)
 
     def retrieve(self, path):
         if(path[0] != '/'):
