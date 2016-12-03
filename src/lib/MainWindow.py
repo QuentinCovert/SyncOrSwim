@@ -45,6 +45,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.currentPath = currentPath
         self.resourcesPath = resourcesPath
         self.settings = None
+        self.clickedPath = None
         self.localSettingsExist = localSettingsExist
         self.globalSettingsExist = globalSettingsExist
         self.initSystem()
@@ -53,10 +54,40 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 
     def getClickedFilePath(self, index):
-        qDebug("%s" % (self.currFileSysModel.filePath(index)))
+        self.clickedPath = self.currFileSysModel.filePath(index))
+        qDebug("User clicked: %s" % (self.clickedPath)
 
     def encryptEnableComboBoxHandler(self, index):
         qDebug("Encrypt enable comboBox changed to index: %d" % index)
+        relPath = getRelPathFromAbs(self.clickedPath, self.settings.rootPath)
+
+        if isIgnored(relPath):
+            self.encryptEnableComboBox.setCurrentIndex(2)
+        else:
+            qDebug("Relative path of file to en/decrypt is: %s" % relPath)
+            tmpObj = self.tree.retrieve(relPath)
+            #Verify retrievely succeeded:
+            if tmpObj is not False:
+                #See if it's a file or directory obj:
+                if isinstance(tmpObj, Directory):
+                    if index == 0:
+                        #Need to set encryption to on:
+                        tmpObj.encryptionOn = True
+                    else:
+                        #Nee to set encryption to off:
+                        tmpObj.encryptionOn = False
+                else:
+                    #It's a file type
+                    if index == 0:
+                        #Need to set encryption to on:
+                        tmpObj.encryptionOn = True
+                    else:
+                        #Nee to set encryption to off:
+                        tmpObj.encryptionOn = False
+
+                    self.tree.store(tmpObj)
+        else:
+            qDebug("ERROR! Could not retrieve obj from relative path in tree!")
 
     def itemIgnoredComboBoxHandler(self, index):
         qDebug("Item ignored comboBox changed to index: %d" % index)
@@ -96,6 +127,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.encryptEnableTitleLabel.setText(_translate("MainWindow", "Auto-Encrypt Enabled:", None))
         self.encryptEnableComboBox.setItemText(0, _translate("MainWindow", "Yes", None))
         self.encryptEnableComboBox.setItemText(1, _translate("MainWindow", "No", None))
+        self.encryptEnableComboBox.setItemText(2, _translate("MainWindow", "-", None))
         self.lastUpatedTitleLabel.setText(_translate("MainWindow", "Last updated:", None))
         self.lastUpdatedOutput.setText(_translate("MainWindow", "11/11/2016", None))
         self.lastSyncedTitleLabel.setText(_translate("MainWindow", "Last Synced:", None))
@@ -233,6 +265,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.optionsLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.encryptEnableTitleLabel)
         self.encryptEnableComboBox = QtGui.QComboBox(self.groupBox)
         self.encryptEnableComboBox.setObjectName(_fromUtf8("encryptEnableComboBox"))
+        self.encryptEnableComboBox.addItem(_fromUtf8(""))
         self.encryptEnableComboBox.addItem(_fromUtf8(""))
         self.encryptEnableComboBox.addItem(_fromUtf8(""))
         self.encryptEnableComboBox.currentIndexChanged.connect(self.encryptEnableComboBoxHandler)

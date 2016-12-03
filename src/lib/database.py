@@ -217,9 +217,6 @@ class IgnoredFileObject(Base):
     def __init__(self, arg):
         self.ignoredFilePath = arg
 
-    def convert(self):
-        return self.ignoredFilePath
-
 class DeletedFileObject(Base):
     __tablename__ = 'deleted_files'
     deletedFilePath = Column(String, primary_key=True)
@@ -227,9 +224,14 @@ class DeletedFileObject(Base):
     def __init__(self, arg):
         self.deletedFilePath = arg
 
-    def convert(self):
-        return self.deletedFilePath
-
+#Checks to see if given path is in the ignored list:
+def isIgnored(path):
+    list = retrieveIgnoredFiles()
+    if path in list:
+        return True
+    else:
+        return False
+        
 #Get a list of relative paths of all files to be ignored by the system.
 def retrieveIgnoredFiles():
     session = Session()
@@ -237,7 +239,7 @@ def retrieveIgnoredFiles():
     session.close()
     retList = []
     for ignoredFileObj in ignoredFileList:
-        reList.append(ignoredFileObj.convert())
+        reList.append(ignoredFileObj.ignoredFilePath)
     return retList
 
 #Removes an ignored filePath from the database. This would be used when the user chooses to no longer ignore a file.
@@ -270,7 +272,7 @@ def retrieveDeletedFiles():
     session.close()
     retList = []
     for deletedFileObj in deletedFileList:
-        reList.append(deletedFileObj.convert())
+        reList.append(deletedFileObj.deletedFilePath)
     return retList
 
 #Removes an deleted filePath from the database. This would be used when the user chooses to add a file which was deleted.

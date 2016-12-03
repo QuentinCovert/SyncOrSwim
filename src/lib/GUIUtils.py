@@ -31,3 +31,16 @@ def isInt(s):
         return True
     except ValueError:
         return False
+
+def getRelPathFromAbs(relPath, absPath):
+    index = 0
+    if absPath.startswith(relPath):
+        for char in absPath:
+            if char is relPath[index]:
+                index++
+            else:
+                break
+
+        return absPath[index:len(absPath)]
+    else:
+        return False
