@@ -50,6 +50,16 @@ class Directory(FileSystemObject):
     def printDirectoryNoChildren(self):
         print("Directory:")
         print(self.path)
+        
+    def retrieve(self, path):
+        if(path == self.path):
+            return self
+        else:
+            for file in self.files:
+                if(file.path = path):
+                    return file
+                if(path.startswith(self.path)):
+                    return file.retrieve(path)
 
     def printDirectory(self):
         print("Directory:")
