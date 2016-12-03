@@ -2,6 +2,7 @@ from cryptography.fernet import Fernet
 import os
 import base64
 import lib.Settings
+from lib.FileSystemObject import FileSystemObject, File, Directory
 
 
 class Crypto:

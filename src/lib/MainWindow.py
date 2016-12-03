@@ -17,6 +17,9 @@ import lib.FileSystemObject as FileSystemObject
 from lib.Settings import Settings
 from lib.Crypto import Crypto
 from shutil import copyfile
+import socket
+import select
+from lib.watchman immport Watchman
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -372,6 +375,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
         #Settings are now created, or proven to exist. Now load them into GUI:
         self.settings = Settings(self.resourcesPath)
+        crypto = Crypto(self.settings.key)
+        remote = Remote(self.settings.rootPath, self.settings)
+
+        #init socket
+        global watchman
+        watchman = Watchman(globalSettings.rootPath, root, crypto, remote, self.settings)
+        watchman.subscribe()
+
 
     def encryptLocalFile(self):
         tmpFilePath = EncryptLocalFileDialog.getEncryptFilePath(self)

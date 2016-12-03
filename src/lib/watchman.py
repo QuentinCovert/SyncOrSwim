@@ -1,12 +1,30 @@
 import os
 import json
 import socket
+import select
+from lib.FileSystemObject import FileSystemObject, File, Directory
+from lib.Crypto import Crypto
+from lib.remote import Remote
+from lib.database import Database
+from datetime import datetime
+import random
 
 class Watchman:
-    def __init__(self):
-        self.sock_path = None
+    def __init__(self, rootPath, root, crypto, remote, settings):
+        self.sock_addr = Watchman.getSocketLocation()
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.sock.setblocking(0)
+        self.rootPath = rootPath
+        self.rootDirectory = root
+        self.crypto = crypto
+        self.remote = remote
+        self.settings = settings
+        try:
+            self.sock.connect(self.sock_addr)
+        except socket.error as msg:
+            print(msg)
 
-    def getSocketLocation(self):
+    def getSocketLocation():
         # Use command line to retrieve socket location
         # and parse it from the JSON formatted output
         sock_info = os.popen('watchman get-sockname').read()
@@ -16,50 +34,19 @@ class Watchman:
     # This now sends and receives separately
     # Sends the json message of the one (1) parameter
     # Receives a response if no parameter is set
-    def socketCommunicate(self, msgObj = None):
-        if self.sock_path is None:
-            self.sock_path = self.getSocketLocation()
-
-        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        s.setblocking(False)
-        s.connect(self.sock_path)
+    def socketCommunicate(self, msgObj):
 
         # Sends the request
         # Only run if sending a message
-        if not (msgObj is None):
-            # Convert msgObj to JSON and send
-            # Must be utf-8 encoded
-            jsonObj = json.dumps(msgObj) + '\n'
-            s.send(jsonObj.encode())
 
-        # Receives the response
-        # Only run if not sending a message
-        data = None
-        if (msgObj is None):
-            data = s.recv(1024)
-
-        s.close()
-
-        # Only run if the message received is non-empty
-        if not (data is None):
-            response = data.decode()
-
-            if len(response) != 0:
-                responseObj = json.loads(response)
-
-                # Check for error in response
-                if 'error' in responseObj:
-                    print('ERROR: ' + responseObj['error'])
-
-                # Return as object
-                return responseObj
-
-            else:
-                print('This data\'s empty. YEET!')      # For debugging.
-                return None
-        else:
-            print('This data\'s empty. YEET!')      # For debugging.
-            return None
+        # Convert msgObj to JSON and send
+        # Must be utf-8 encoded
+        jsonObj = json.dumps(msgObj) + '\n'
+        writeList = [self.sock]
+        read, write, err = select.select([], writeList, [])
+        while not write:
+            read, write, err = select.select([], writeList, [])
+        self.sock.send(jsonObj.encode())
 
     def checkVersion(self):
         self.socketCommunicate(['version'])
@@ -90,18 +77,18 @@ class Watchman:
         else:
             return None
 
-    def subscribe(self, path_to_root, subscription_name, ignore_files_list = None):
+    def subscribe(self):
         # Watch anything that is a file (f) or directory (d) in this root directory
         expression = {'expression': ['allof', ['anyof', ['type', 'f'], ['type', 'd']]]}
 
         # Add ignored files to the filter
         # only if this is given
-        if not (ignored_files_list is None):
-            ignore_expression = self.ignoredFilesToExpression(ignore_files_list)
-            if not (ignore_expression is None):
-                expression['expression'].append(ignore_expression)
+        #if not (ignored_files_list is None):
+        #    ignore_expression = self.ignoredFilesToExpression(ignore_files_list)
+        #    if not (ignore_expression is None):
+        #        expression['expression'].append(ignore_expression)
 
-        subRequest = ['subscribe', path_to_root, subscription_name, expression]
+        subRequest = ['subscribe', self.rootPath, 'sub1', expression]
 
         self.socketCommunicate(subRequest)
 
@@ -126,3 +113,45 @@ class Watchman:
         sinceRequest = ['query', path_to_root, sinceObj]
 
         self.socketCommunicate(sinceRequest)
+
+    def parse(self):
+        #check if there is a new message
+        readList = [self.sock]
+        read, write, err = select.select(readList, [], [])
+        while read:
+            #parse the message and perform task
+            readSock = read.pop()
+            data = readSock.recv(1024)
+            jsonObj = json.loads(data)
+            files = jsonObj["files"]
+            for file in files:
+                name = file["name"]
+                new = file["new"]
+                exists = file["exists"]
+
+                if new == 'true':
+                    #create file object
+                    randomName = random.randint(1, 1000000)
+                    #check if random name was already used
+                    while os.path.exists(self.settings.remotePath + randomName):
+                        randomName = random.randint(1, 1000000)
+                    myFile = File(self.rootDirectory + name, 0, 0, 1, datetime.now(), randomName)
+                    #iterater over directories and place into tree
+                    
+                    self.crypto.encrypt(myFile)
+                    self.remote.push(myFile)
+                elif exists == 'true':
+                    #encrypt and upload
+                    fileObject = self.rootDirectory.retrieve(name)
+                    self.crypto.encrypt(fileObject)
+                    self.remote.push(fileObject)
+                    fileObject.lastModified = os.path.getmtime(self.rootPath + name)
+                    self.database.store(fileObject)
+                else:
+                    #file was deleted
+                    fileObject = self.rootDirectory.retrieve(name)
+                    fileObject.deleted = True
+                    self.database.store(fileObject)
+
+            read, write, err = select.select(readList, [], [])
+
