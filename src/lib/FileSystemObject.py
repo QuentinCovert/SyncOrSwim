@@ -66,7 +66,7 @@ class Directory(FileSystemObject):
              return None
         else:
             for file in self.files:
-                if(file.path == path):
+                if(file.path == fd.path):
                     file.lastModified = fd.lastModified
                     file.fileDeleted = fd.fileDeleted
                     file.encryptionOn = fd.encryptionOn
