@@ -61,6 +61,26 @@ class Directory(FileSystemObject):
                 if(path.startswith(self.path)):
                     return file.retrieve(path)
 
+  def store(self, fd):
+        if(fd.path == self.path):
+             self.lastModified = fd.lastModified
+             self.fileDeleted = fd.fileDeleted
+             self.encryptionOn = fd.encryptionOn
+             self.lastSyncTime = fd.lastSyncTime
+             self.files = fd.files             
+        else:
+            #for i in range(len(self.files)):
+            for file in self.files:
+                if(file.path = path):
+                    file.lastModified = fd.lastModified
+                    file.fileDeleted = fd.fileDeleted
+                    file.encryptionOn = fd.encryptionOn
+                    file.lastSyncTime = fd.lastSyncTime
+                    file.encryptedFilePath = fd.encryptedFilePath
+                if(path.startswith(self.path)):
+                    file.store(fd)
+
+
     def printDirectory(self):
         print("Directory:")
         print(self.path)
