@@ -77,7 +77,7 @@ class Directory(FileSystemObject):
                     file.encryptionOn = fd.encryptionOn
                     file.lastSyncTime = fd.lastSyncTime
                     file.encryptedFilePath = fd.encryptedFilePath
-                if(path.startswith(self.path)):
+                if(fd.path.startswith(self.path)):
                     file.store(fd)
 
 
