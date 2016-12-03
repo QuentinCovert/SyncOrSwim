@@ -41,7 +41,7 @@ except AttributeError:
 class Ui_MainWindow(QtGui.QMainWindow):
     def __init__(self, currentPath, resourcesPath, localSettingsExist, globalSettingsExist):
         super(Ui_MainWindow, self).__init__()
-        self.tree = None
+        self.root = None
         self.currentPath = currentPath
         self.resourcesPath = resourcesPath
         self.settings = None
@@ -378,8 +378,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.watchman.parse()
 
     def initSystem(self):
-        root = database.pullRoots()
-        self.tree = FSOTreeGenerator.generateTree(root)
+        self.root = database.pullRoots()
         qDebug("Initalizing system.")
         #if the user does not have local settings file, initialize it
         if self.localSettingsExist == False:
@@ -403,26 +402,32 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 copyfile(accessKeyPath, dst)
                 #TODO: get database and shit
                 #TODO: download files from remote
+                
             else:
                 size, unit = GenerateAccessKeyDialog.openDialog("", "", self)
                 if size is "" and unit is "":
                     sys.exit()
                 qDebug("MainWindow: returned from set encryption options: size = %s, unit = %s" % (size, unit))
                 #convert size and unit to bytes
-                if unit == 'Mb':
+                if unit == 'MB':
                     sizeBytes = int(size) * 1000000
                 else:
                     sizeBytes = int(size) * 1000000000
                 #generate settings file
                 key = Crypto.generateKey()
                 Settings.generateGlobalSettings(self.resourcesPath, sizeBytes, 10000000, key)
+                #this is a new remote, upload the local database to it
+                #NOTE: maybe generate new database here?
+                self.settings = Settings(self.resourcesPath)
+                remote = Remote(self.settings.remotePath, self.settings)
+                remote.uploadDatabase(self.resourcesPath)
         #Settings are now created, or proven to exist. Now load them into GUI:
         self.settings = Settings(self.resourcesPath)
         crypto = Crypto(self.settings)
         remote = Remote(self.settings.remotePath, self.settings)
-
+        sync.localSyncFinal(remote, crypto, self.settings.rootPath) 
         #init socket
-        self.watchman = Watchman(self.settings.rootPath, root, crypto, remote, self.settings)
+        self.watchman = Watchman(self.settings.rootPath, root, crypto, remote, self.settings, self.resourcesPath)
         self.watchman.subscribe()
 
 

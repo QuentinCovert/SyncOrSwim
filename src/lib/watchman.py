@@ -9,9 +9,10 @@ import lib.database
 from datetime import datetime
 import random
 from PyQt4.QtCore import qDebug
+import time
 
 class Watchman:
-    def __init__(self, rootPath, root, crypto, remote, settings):
+    def __init__(self, rootPath, root, crypto, remote, settings, resourcesPath):
         self.sock_addr = Watchman.getSocketLocation()
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.sock.setblocking(0)
@@ -20,6 +21,7 @@ class Watchman:
         self.crypto = crypto
         self.remote = remote
         self.settings = settings
+        self.resourcesPath = resourcesPath
         try:
             self.sock.connect(self.sock_addr)
         except socket.error as msg:
@@ -125,45 +127,61 @@ class Watchman:
             #parse the message and perform task
             readSock = read.pop()
             data = readSock.recv(1024)
-            jsonObj = json.loads(data.decode("utf-8"))
-            try:
-                files = jsonObj["files"]
-            except Exception as e:
-                qDebug("Key error - disregard")
-                return
-            for file in files:
-                name = file["name"]
-                new = file["new"]
-                exists = file["exists"]
+            for line in data.splitlines():
+                print(line)
+                jsonObj = json.loads(line.decode("utf-8"))
+                try:
+                    files = jsonObj["files"]
+                except Exception as e:
+                    qDebug("Key error - disregard")
+                    return
+                for file in files:
+                    name = file["name"]
+                    new = file["new"]
+                    exists = file["exists"]
 
-                if new == True:
-                    qDebug("New file added.")
-                    #create file object
-                    randomName = random.randint(1, 1000000)
-                    #check if random name was already used
-                    while os.path.exists(self.settings.remotePath + str(randomName)):
+                    if new == True:
+                        #test if file still exists
+                        if os.path.exists(self.rootPath + name) == False:
+                            return
+                        qDebug("New file added.")
+                        #test if file is still copying
+                        size = os.path.getsize(self.rootPath + name)
+                        #delay one second
+                        time.sleep(1)
+                        #check size again
+                        while size != os.path.getsize(self.rootPath + name):
+                            time.sleep(1)
+                            size = os.path.getsize(self.rootPath + name)
+                        #create file object
                         randomName = random.randint(1, 1000000)
-                    modTime = datetime.fromtimestamp(os.path.getmtime(self.rootPath + name))
-                    myFile = File(name, modTime, 0, 1, datetime.today(), randomName)
-                    #lib.database.store(myFile)      
-                    self.rootDirectory.store(myFile)
-                    lib.database.store(self.rootDirectory)
-                    self.crypto.encrypt(myFile)
-                    self.remote.push(myFile)
-                elif exists == True:
-                    qDebug("Modified file.")
-                    #encrypt and upload
-                    fileObject = self.rootDirectory.retrieve(name)
-                    self.crypto.encrypt(fileObject)
-                    self.remote.push(fileObject)
-                    fileObject.lastModified = os.path.getmtime(self.rootPath + name)
-                    lib.database.store(fileObject)
-                else:
-                    qDebug("Deleted file.")
-                    #file was deleted
-                    fileObject = self.rootDirectory.retrieve(name)
-                    fileObject.deleted = True
-                    lib.database.store(fileObject)
-            read, write, err = select.select(readList, [], [], 0)
+                        #check if random name was already used
+                        while os.path.exists(self.settings.remotePath + str(randomName)):
+                            randomName = random.randint(1, 1000000)
+                        modTime = datetime.fromtimestamp(os.path.getmtime(self.rootPath + name))
+                        myFile = File(name, modTime, 0, 1, datetime.today(), randomName)
+                        #lib.database.store(myFile)
+                        self.rootDirectory.store(myFile)
+                        lib.database.store(self.rootDirectory)
+                        qDebug(str(os.path.getsize(self.rootPath + name)))
+                        self.crypto.encrypt(myFile)
+                        self.remote.push(myFile)
+                    elif exists == True:
+                        qDebug("Modified file.")
+                        #encrypt and upload
+                        fileObject = self.rootDirectory.retrieve(name)
+                        self.crypto.encrypt(fileObject)
+                        self.remote.push(fileObject)
+                        fileObject.lastModified = datetime.fromtimestamp(os.path.getmtime(self.rootPath + name))
+                        lib.database.store(fileObject)
+                    else:
+                        qDebug("Deleted file.")
+                        #file was deleted
+                        fileObject = self.rootDirectory.retrieve(name)
+                        lib.database.delete(fileObject)
+                        self.remote.delete(fileObject)
+                    #database was updated, encrypt and reupload
+                    self.remote.uploadDatabase(self.resourcesPath)
+                read, write, err = select.select(readList, [], [], 0)
         qDebug("Exiting busy loop")
 

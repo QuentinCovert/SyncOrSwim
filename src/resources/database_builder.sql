@@ -24,4 +24,6 @@ CREATE TABLE ignored_files (
 CREATE TABLE deleted_files (
     "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
 );
+--insert into directories values ('', '2016-01-01 1:00:00', 0, 0, null, null);
 .exit
+
