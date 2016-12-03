@@ -70,14 +70,6 @@ class DirectoryObject(Base):
             return Directory(self.path, self.lastModified, self.deleted, self.toEncrypt, self.lastSync,[])
 
 
-class GlobalRoots(Base):
-        __tablename__ = 'global_roots'
-        name = Column(String, primary_key=True)
-
-        def __init__(self, name):
-            self.name = name
-
-
 #Files and Directories Section
 
 #Retrieve file or directory from database based on relative path
@@ -106,8 +98,8 @@ def retrieve(path1):
                         #print(d)
                         for fd in d:
                            # print(fd.path)
-                            obj.files.append(retrieve(fd.path))
-
+                            if(fd.path != fd.parent):
+                                obj.files.append(retrieve(fd.path))
                         session.close()
                         return obj
                 else:
@@ -217,21 +209,4 @@ def checkMod(checkList):
 				outOfSync.append(fd)
 	return outOfSync
 
-
-#Settings Section
-
-def insert_root(name):
-    root = GlobalRoots(name)
-    session = Session()
-    session.merge(root)
-    session.commit()
-    session.close()
-    return None
-
-def delete_root(name):
-    session = Session()
-    session.query(GlobalRoots).filter_by(name = name).delete()
-    session.commit()
-    session.close()
-    return None
 
