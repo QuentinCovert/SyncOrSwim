@@ -26,4 +26,3 @@ def localSync(rem, root, crypto):
     else:
         for file in files:
             localSync(file, root, crypto)
-            
