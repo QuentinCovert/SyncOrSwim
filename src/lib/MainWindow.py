@@ -51,6 +51,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
     def getClickedFilePath(self, index):
         qDebug("%s" % (self.currFileSysModel.filePath(index)))
 
+    def encryptEnableComboBoxHandler(self, index):
+        qDebug("Encrypt enable comboBox changed to index: %d" % index)
+
+    def itemIgnoredComboBoxHandler(self, index):
+        qDebug("Item ignored comboBox changed to index: %d" % index)
+
     def setupUi(self, MainWindow):
 
         #Inital setup:
@@ -211,6 +217,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.itemIgnoredComboBox.setObjectName(_fromUtf8("itemIgnoredComboBox"))
         self.itemIgnoredComboBox.addItem(_fromUtf8(""))
         self.itemIgnoredComboBox.addItem(_fromUtf8(""))
+        self.itemIgnoredComboBox.currentIndexChanged.connect(self.itemIgnoredComboBoxHandler)
         self.optionsLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.itemIgnoredComboBox)
         self.encryptEnableTitleLabel = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
@@ -224,6 +231,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.encryptEnableComboBox.setObjectName(_fromUtf8("encryptEnableComboBox"))
         self.encryptEnableComboBox.addItem(_fromUtf8(""))
         self.encryptEnableComboBox.addItem(_fromUtf8(""))
+        self.encryptEnableComboBox.currentIndexChanged.connect(self.encryptEnableComboBoxHandler)
         self.optionsLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.encryptEnableComboBox)
         self.lastUpatedTitleLabel = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
