@@ -5,6 +5,7 @@ import os
 
 
 def localSync(rem, root, crypto):
+#recursively checks every file in a directory, if changes have occurred, the files are pulled from the remote and put on the local system
 #checks local files for last modified date, if remote is the last modified, download and decrypt it
 #if local is last modified, print something
 #delete as well
@@ -27,3 +28,6 @@ def localSync(rem, root, crypto):
     else:
         for file in files:
             localSync(file, root, crypto)
+
+def localSyncFinal(remote, crypto):
+    
