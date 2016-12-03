@@ -39,5 +39,5 @@ def localSyncFinal(remote, crypto, root):
     remote.downloadDatabase()
     #pull root from database
     rem = database.pullRoots()
-    #execute local sync funtionn
+    #execute local sync funtion
     localSync(rem, root, local)
