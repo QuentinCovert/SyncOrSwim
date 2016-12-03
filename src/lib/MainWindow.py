@@ -41,7 +41,7 @@ except AttributeError:
 class Ui_MainWindow(QtGui.QMainWindow):
     def __init__(self, currentPath, resourcesPath, localSettingsExist, globalSettingsExist):
         super(Ui_MainWindow, self).__init__()
-        self.tree = None
+        self.root = None
         self.currentPath = currentPath
         self.resourcesPath = resourcesPath
         self.settings = None
@@ -345,8 +345,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.watchman.parse()
 
     def initSystem(self):
-        root = database.pullRoots()
-        self.tree = FSOTreeGenerator.generateTree(root)
+        self.root = database.pullRoots()
         qDebug("Initalizing system.")
         #if the user does not have local settings file, initialize it
         if self.localSettingsExist == False:
@@ -370,6 +369,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 copyfile(accessKeyPath, dst)
                 #TODO: get database and shit
                 #TODO: download files from remote
+                
             else:
                 size, unit = GenerateAccessKeyDialog.openDialog("", "", self)
                 if size is "" and unit is "":
@@ -392,7 +392,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.settings = Settings(self.resourcesPath)
         crypto = Crypto(self.settings)
         remote = Remote(self.settings.remotePath, self.settings)
-
+        sync.localSyncFinal(remote, crypto, self.settings.rootPath) 
         #init socket
         self.watchman = Watchman(self.settings.rootPath, root, crypto, remote, self.settings, self.resourcesPath)
         self.watchman.subscribe()
