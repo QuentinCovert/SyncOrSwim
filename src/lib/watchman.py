@@ -178,9 +178,8 @@ class Watchman:
                         qDebug("Deleted file.")
                         #file was deleted
                         fileObject = self.rootDirectory.retrieve(name)
-                        fileObject.lastModified = datetime.now()
-                        fileObject.fileDeleted = 1
-                        lib.database.store(fileObject)
+                        lib.database.delete(fileObject)
+                        self.remote.delete(fileObject)
                     #database was updated, encrypt and reupload
                     self.remote.uploadDatabase(self.resourcesPath)
                 read, write, err = select.select(readList, [], [], 0)

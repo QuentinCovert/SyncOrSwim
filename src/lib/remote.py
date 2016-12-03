@@ -70,6 +70,28 @@ class Remote:
             for file in fileSO.files:
                 self.pull(file)
 
+    def delete(self, fileSO):
+        #get path to root directory from settings module
+        encryptedFolder = self.GlobalSettings.encryptedFolder
+        rootPath = self.GlobalSettings.rootPath
+        #check if file or directory
+        if isinstance(fileSO, File):
+            #check if file is supposed to be encrypted
+            if fileSO.encryptionOn:
+                #the file is encrypted, copy from encrypted path to remote path
+                #check if folder or single encrypted file
+                if os.path.isdir(encryptedFolder + fileSO.encryptedFilePath):
+                    #its a directory, must delete whole thing
+                    shutil.rmtree(encryptedFolder + fileSO.encryptedFilePath)
+                else:
+                    #single file, just delete
+                    os.remove(encryptedFolder + fileSO.encryptedFilePath)
+            else:
+                #it's not supposed to be encrypted, so just delete from root
+                os.remove(rootPath + fileSO.path)
+        elif isinstance(fileSO, Directory):
+            shutil.rmtree(encryptedFolder + fileSO.path)
+            
     def uploadDatabase(self, resourcesPath):
         #encrypt local database
         myFernet = Fernet(self.GlobalSettings.key)

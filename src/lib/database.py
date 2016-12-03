@@ -130,13 +130,13 @@ def fastRetrieve(path):
 #deletes file or directory and all subdirectories from database
 def delete(obj1):
     if((type(obj1) is File) or (type(obj1) is Directory)):
+        storeIgnoredFile(obj1.path)
         session = Session()
         path1 = obj1.path
         if(type(obj1) is Directory):
             for fd in obj1.files:
                 delete(fd)
             session.query(DirectoryObject).filter_by(path=path1).delete()
-
         if(type(obj1) is File):
             session.query(FileObject).filter_by(path=path1).delete()
         session.commit()
