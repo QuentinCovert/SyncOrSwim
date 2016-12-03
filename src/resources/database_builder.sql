@@ -18,8 +18,12 @@ CREATE TABLE directories (
     "lastSync" DATETIME,
     "parent" TEXT
 );
-CREATE TABLE global_roots(
-    "root" TEXT PRIMARY KEY NOT NULL UNIQUE
+CREATE TABLE ignored_files (
+    "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
+);
+CREATE TABLE deleted_files (
+    "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
 );
 --insert into directories values ('', '2016-01-01 1:00:00', 0, 0, null, null);
 .exit
+
