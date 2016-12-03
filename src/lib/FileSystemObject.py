@@ -60,6 +60,7 @@ class Directory(FileSystemObject):
                     return file
                 if(path.startswith(self.path)):
                     return file.retrieve(path)
+            return False
 
   def store(self, fd):
         if(fd.path == self.path):
