@@ -66,14 +66,14 @@ class Directory(FileSystemObject):
              return None
         else:
             for file in self.files:
-                if(file.path == path):
+                if(file.path == fd.path):
                     file.lastModified = fd.lastModified
                     file.fileDeleted = fd.fileDeleted
                     file.encryptionOn = fd.encryptionOn
                     file.lastSyncTime = fd.lastSyncTime
                     file.encryptedFilePath = fd.encryptedFilePath
                     return None
-                if(fd.path.startswith(self.path)):
+                if(fd.path.startswith(file.path)):
                     file.store(fd)
                     return None
             #if directory doesn't exist, create next directory and continues
