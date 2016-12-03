@@ -14,20 +14,21 @@ In order to utilize ZenHub, we primarily work/contribute to this git repository 
   * http://www.sqlalchemy.org/download.html
   * https://sourceforge.net/projects/pyqt/
   * https://github.com/facebook/watchman/.
-3. Make sure that Watchman is properly installed by running `watchman get-sockname` in the console. It should return a json-formatted output similar to:
-  ```
-  {
-    "version": "4.7.0",
-    "sockname": "/path/to/the/sock"
-  }
-  ```
-  Otherwise, the software will not work properly.
+3. Make sure that Watchman is properly installed by running `watchman get-sockname` in the console. Without it, the program will not run correctly. It should return a json-formatted output similar to:
+```
+{
+  "version": "4.7.0",
+  "sockname": "/path/to/the/sock"
+}
+```
 
 **Note**: Currently, this program is only supported and tested on Linux.
 
 ## Usage
 1. Using Python 3.4.1, execute the Main module with the following command: path/to/src/Main.py
 2. Follow the on-screen instructions to begin syncing files.
+
+This is **not** a replacement for a version control system. This program is concerned with the most recent version of the root directory. 
 
 ## Repository Structure
 - Diagrams
