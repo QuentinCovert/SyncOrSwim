@@ -68,7 +68,8 @@ class Directory(FileSystemObject):
              self.fileDeleted = fd.fileDeleted
              self.encryptionOn = fd.encryptionOn
              self.lastSyncTime = fd.lastSyncTime
-             self.files = fd.files             
+             self.files = fd.files
+             return None
         else:
             #for i in range(len(self.files)):
             for file in self.files:
@@ -78,8 +79,16 @@ class Directory(FileSystemObject):
                     file.encryptionOn = fd.encryptionOn
                     file.lastSyncTime = fd.lastSyncTime
                     file.encryptedFilePath = fd.encryptedFilePath
+                    return None
                 if(fd.path.startswith(self.path)):
                     file.store(fd)
+                    return None
+            #if directory doesn't exist, create next directory and continue
+            path = self.path + (os.path.relpath(path,bar).split('/')[0])                                                  
+            self.files.insert(0, Directory(path, fd.lastModified, fd.fileDeleted, fd.encryptionOn, fd.lastSyncTime, []))
+            self.files[0].store(fd)
+            return None
+            
 
 
     def printDirectory(self):
