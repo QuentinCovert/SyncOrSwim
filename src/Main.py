@@ -12,7 +12,6 @@ from lib.Crypto import Crypto
 from cryptography.fernet import Fernet
 import base64
 import lib.database
-import lib.sync as sync
 
 global localSettingsExist
 global globalSettingsExist
@@ -65,12 +64,10 @@ if localSettingsExist and globalSettingsExist:
         outFile.close()
         #compare files
         rootDirectory = database.pullRoots()
-        sync.localSync(globalSettings.rootPath, rootDirectory, globalCrypto)
-
 
     else:
         #local is newer, replace remote and upload files
-        x =2
+        x = 1
         #rootDirectory = lib.database.pullRoots()
         #print(rootDirectory.files[0].path)
 
@@ -80,6 +77,7 @@ print(localSettingsExist)
 app = QtGui.QApplication(sys.argv)
 MainWindow = QtGui.QMainWindow()
 ui = Ui_MainWindow(currentPath, resourcesPath, localSettingsExist, globalSettingsExist)
+
 ui.setupUi(MainWindow)
 MainWindow.show()
 sys.exit(app.exec_())

@@ -19,7 +19,8 @@ from lib.Crypto import Crypto
 from shutil import copyfile
 import socket
 import select
-from lib.watchman immport Watchman
+from lib.watchman import Watchman
+from lib.remote import Remote
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -333,6 +334,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
     def busyLoop(self):
         #Do busy loop work here
         qDebug("Busy loop triggered.")
+        self.watchman.parse()
 
     def initSystem(self):
         root = database.pullRoots()
@@ -359,6 +361,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 dst = self.resourcesPath + "global_settings.p"
                 copyfile(accessKeyPath, dst)
                 #TODO: get database and shit
+                #TODO: download files from remote
             else:
                 size, unit = GenerateAccessKeyDialog.openDialog("", "", self)
                 if size is "" and unit is "":
@@ -372,16 +375,14 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 #generate settings file
                 key = Crypto.generateKey()
                 Settings.generateGlobalSettings(self.resourcesPath, sizeBytes, 10000000, key)
-
         #Settings are now created, or proven to exist. Now load them into GUI:
         self.settings = Settings(self.resourcesPath)
-        crypto = Crypto(self.settings.key)
+        crypto = Crypto(self.settings)
         remote = Remote(self.settings.rootPath, self.settings)
 
         #init socket
-        global watchman
-        watchman = Watchman(globalSettings.rootPath, root, crypto, remote, self.settings)
-        watchman.subscribe()
+        self.watchman = Watchman(self.settings.rootPath, root, crypto, remote, self.settings)
+        self.watchman.subscribe()
 
 
     def encryptLocalFile(self):

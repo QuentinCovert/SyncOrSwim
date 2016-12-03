@@ -5,9 +5,10 @@ import select
 from lib.FileSystemObject import FileSystemObject, File, Directory
 from lib.Crypto import Crypto
 from lib.remote import Remote
-from lib.database import Database
+import lib.database
 from datetime import datetime
 import random
+from PyQt4.QtCore import qDebug
 
 class Watchman:
     def __init__(self, rootPath, root, crypto, remote, settings):
@@ -116,42 +117,51 @@ class Watchman:
 
     def parse(self):
         #check if there is a new message
+        qDebug("Started parse.")
         readList = [self.sock]
-        read, write, err = select.select(readList, [], [])
+        read, write, err = select.select(readList, [], [], 0)
         while read:
+            qDebug("Entered read loop.")
             #parse the message and perform task
             readSock = read.pop()
             data = readSock.recv(1024)
-            jsonObj = json.loads(data)
-            files = jsonObj["files"]
+            jsonObj = json.loads(data.decode("utf-8"))
+            try:
+                files = jsonObj["files"]
+            except Exception as e:
+                qDebug("Key error - disregard")
+                return
             for file in files:
                 name = file["name"]
                 new = file["new"]
                 exists = file["exists"]
 
-                if new == 'true':
+                if new == True:
+                    qDebug("New file added.")
                     #create file object
                     randomName = random.randint(1, 1000000)
                     #check if random name was already used
-                    while os.path.exists(self.settings.remotePath + randomName):
+                    while os.path.exists(self.settings.remotePath + str(randomName)):
                         randomName = random.randint(1, 1000000)
-                    myFile = File(self.rootDirectory + name, 0, 0, 1, datetime.now(), randomName)
-                    #iterater over directories and place into tree
-                    
+                    modTime = os.path.getmtime(self.rootPath + name)
+                    myFile = File(self.rootPath + name, modTime, 0, 1, datetime.today(), randomName)
+                    lib.database.store(myFile)
                     self.crypto.encrypt(myFile)
                     self.remote.push(myFile)
-                elif exists == 'true':
+                elif exists == True:
+                    qDebug("Modified file.")
                     #encrypt and upload
                     fileObject = self.rootDirectory.retrieve(name)
                     self.crypto.encrypt(fileObject)
                     self.remote.push(fileObject)
                     fileObject.lastModified = os.path.getmtime(self.rootPath + name)
-                    self.database.store(fileObject)
+                    lib.database.store(fileObject)
                 else:
+                    qDebug("Deleted file.")
                     #file was deleted
                     fileObject = self.rootDirectory.retrieve(name)
                     fileObject.deleted = True
-                    self.database.store(fileObject)
-
+                    lib.database.store(fileObject)
             read, write, err = select.select(readList, [], [])
+        qDebug("Exiting busy loop")
 

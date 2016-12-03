@@ -14,12 +14,6 @@ class FileSystemObject(metaclass=ABCMeta):
     def getPath(self):
         return self.path
 
-    @abstractmethod
-    def encrypt(self, crypto): pass
-
-    @abstractmethod
-    def decrypt(self, crypto): pass
-
 
 class File(FileSystemObject):
 
@@ -50,19 +44,19 @@ class Directory(FileSystemObject):
     def printDirectoryNoChildren(self):
         print("Directory:")
         print(self.path)
-        
+
     def retrieve(self, path):
         if(path == self.path):
             return self
         else:
             for file in self.files:
-                if(file.path = path):
+                if(file.path == path):
                     return file
                 if(path.startswith(self.path)):
                     return file.retrieve(path)
             return False
 
-  def store(self, fd):
+    def store(self, fd):
         if(fd.path == self.path):
              self.lastModified = fd.lastModified
              self.fileDeleted = fd.fileDeleted
@@ -73,7 +67,7 @@ class Directory(FileSystemObject):
         else:
             #for i in range(len(self.files)):
             for file in self.files:
-                if(file.path = path):
+                if(file.path == path):
                     file.lastModified = fd.lastModified
                     file.fileDeleted = fd.fileDeleted
                     file.encryptionOn = fd.encryptionOn
@@ -84,11 +78,11 @@ class Directory(FileSystemObject):
                     file.store(fd)
                     return None
             #if directory doesn't exist, create next directory and continue
-            path = self.path + (os.path.relpath(path,bar).split('/')[0])                                                  
+            path = self.path + (os.path.relpath(path,bar).split('/')[0])
             self.files.insert(0, Directory(path, fd.lastModified, fd.fileDeleted, fd.encryptionOn, fd.lastSyncTime, []))
             self.files[0].store(fd)
             return None
-            
+
 
 
     def printDirectory(self):
