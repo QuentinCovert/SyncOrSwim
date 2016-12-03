@@ -18,10 +18,10 @@ class Remote:
         #check if file or Directory
         if isinstance(fileSO, File):
             #check if file is supposed to be encrypted
-            if fileSO.encrypted:
+            if fileSO.encryptionOn:
                 #the file is encrypted, copy from encrypted path to remote path
                 #check if folder or single encrypted file
-                if os.isdir(encryptedFolder + fileSO.encryptedFilePath):
+                if os.path.isdir(encryptedFolder + fileSO.encryptedFilePath):
                     #its a directory, must copy whole thing
                     dst = self.location + fileSO.encryptedFilePath
                     rmtree(dst)
@@ -46,10 +46,10 @@ class Remote:
         #check if file or directory
         if isinstance(fileSO, File):
             #check if file is supposed to be encrypted
-            if fileSO.encrypted:
+            if fileSO.encryptionOn:
                 #the file is encrypted, copy from encrypted path
                 #check if folder or single encrypted file
-                if os.isdir(self.location + fileSO.encryptedFilePath):
+                if os.path.isdir(self.location + fileSO.encryptedFilePath):
                     #it is a directory, download into folder in local encrypted folder
                     dst = encryptedFolder + fileSO.encryptedFilePath
                     rmtree(dst)
