@@ -182,7 +182,7 @@ def cull():
 #pulls roots from database
 def pullRoots():
     session = Session()
-    roots = session.query(DirectoryObject).filter_by(parent = "").all()
+    roots = session.query(DirectoryObject).filter_by(path = "").all()
     if (len(roots)==1):
         rootObjects = (retrieve(roots[0].path))
         return rootObjects
