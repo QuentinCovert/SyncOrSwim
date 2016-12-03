@@ -19,7 +19,7 @@ class File(FileSystemObject):
 
     def __init__(self, path, mod, deleted, encrypted, lastSync, ePath):
         super().__init__(path, mod, deleted, encrypted, lastSync)
-        self.encryptedFilePath = ePath
+        self.encryptedFilePath = str(ePath)
 
 
     def printFile(self):

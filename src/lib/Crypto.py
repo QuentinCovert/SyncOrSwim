@@ -11,8 +11,8 @@ class Crypto:
         self.key = settings.key
         self.fernet = Fernet(self.key)
         self.GlobalSettings = settings
-        MINIMUM_SPLIT_SIZE = self.GlobalSettings.minimum_split_size
-        BLOCK_SIZE = self.GlobalSettings.block_size
+        self.MINIMUM_SPLIT_SIZE = self.GlobalSettings.minimum_split_size
+        self.BLOCK_SIZE = self.GlobalSettings.block_size
 
     def generateKey():
         return Fernet.generate_key()
@@ -24,7 +24,7 @@ class Crypto:
         encryptedFolder = self.GlobalSettings.encryptedFolder
         fileSize = os.path.getsize(rootPath + file.path)
 
-        if fileSize < MINIMUM_SPLIT_SIZE:
+        if fileSize < self.MINIMUM_SPLIT_SIZE:
             # encrypt in one file
             inFile = open(rootPath + file.path, "rb")
             outFile = open(encryptedFolder + file.encryptedFilePath, "wb")
@@ -38,7 +38,7 @@ class Crypto:
             # encrypt in chunks
             chunkIndex = 0
             inFile = open(rootPath + file.path, "rb")
-            chunk = inFile.read(BLOCK_SIZE)
+            chunk = inFile.read(self.BLOCK_SIZE)
             while chunk != b'':
                 # verify folder exists or create if necessary
                 filename = encryptedFolder + file.encryptedFilePath + "/chunk" + str(chunkIndex)
@@ -49,7 +49,7 @@ class Crypto:
                 outFile.write(outDataBin)
                 outFile.close()
                 chunkIndex += 1
-                chunk = inFile.read(BLOCK_SIZE)
+                chunk = inFile.read(self.BLOCK_SIZE)
             inFile.close()
 
     def decrypt(self, file):

@@ -378,7 +378,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         #Settings are now created, or proven to exist. Now load them into GUI:
         self.settings = Settings(self.resourcesPath)
         crypto = Crypto(self.settings)
-        remote = Remote(self.settings.rootPath, self.settings)
+        remote = Remote(self.settings.remotePath, self.settings)
 
         #init socket
         self.watchman = Watchman(self.settings.rootPath, root, crypto, remote, self.settings)

@@ -80,7 +80,7 @@ class Watchman:
 
     def subscribe(self):
         # Watch anything that is a file (f) or directory (d) in this root directory
-        expression = {'expression': ['allof', ['anyof', ['type', 'f'], ['type', 'd']]]}
+        expression = {'expression': ['allof', ['type', 'f']]}
 
         # Add ignored files to the filter
         # only if this is given
@@ -143,8 +143,8 @@ class Watchman:
                     #check if random name was already used
                     while os.path.exists(self.settings.remotePath + str(randomName)):
                         randomName = random.randint(1, 1000000)
-                    modTime = os.path.getmtime(self.rootPath + name)
-                    myFile = File(self.rootPath + name, modTime, 0, 1, datetime.today(), randomName)
+                    modTime = datetime.fromtimestamp(os.path.getmtime(self.rootPath + name))
+                    myFile = File(name, modTime, 0, 1, datetime.today(), randomName)
                     lib.database.store(myFile)
                     self.crypto.encrypt(myFile)
                     self.remote.push(myFile)
@@ -162,6 +162,6 @@ class Watchman:
                     fileObject = self.rootDirectory.retrieve(name)
                     fileObject.deleted = True
                     lib.database.store(fileObject)
-            read, write, err = select.select(readList, [], [])
+            read, write, err = select.select(readList, [], [], 0)
         qDebug("Exiting busy loop")
 

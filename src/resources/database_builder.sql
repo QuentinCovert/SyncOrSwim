@@ -1,6 +1,5 @@
 DROP TABLE files;
 DROP TABLE directories;
-DROP TABLE global_settings;
 DROP TABLE global_roots;
 CREATE TABLE files (
     "path" TEXT PRIMARY KEY NOT NULL UNIQUE,
