@@ -1,6 +1,8 @@
 from lib.FileSystemObject import FileSystemObject, File, Directory
 import os
 from shutil import copytree, copyfile, rmtree
+from cryptography.fernet import Fernet
+import base64
 
 #NOTE: encryptedFilePath MUST be a relative path. I need a way to get the absolute path
 
@@ -24,7 +26,8 @@ class Remote:
                 if os.path.isdir(encryptedFolder + fileSO.encryptedFilePath):
                     #its a directory, must copy whole thing
                     dst = self.location + fileSO.encryptedFilePath
-                    rmtree(dst)
+                    if os.path.exists(dst):
+                        rmtree(dst)
                     copytree(encryptedFolder + fileSO.encryptedFilePath, dst)
                 else:
                     #single file, just copy
@@ -66,3 +69,19 @@ class Remote:
             #it's a directory, iterate over all children
             for file in fileSO.files:
                 self.pull(file)
+
+    def uploadDatabase(self, resourcesPath):
+        #encrypt local database
+        myFernet = Fernet(self.GlobalSettings.key)
+        inFile = open(resourcesPath + 'SyncOrSwimDB.db', 'rb')
+        outFile = open(self.GlobalSettings.encryptedFolder + 'SyncOrSwimDB', 'wb')
+        outData = myFernet.encrypt(inFile.read())
+        outDataBin = base64.urlsafe_b64decode(outData)
+        outFile.write(outDataBin)
+        inFile.close()
+        outFile.close()
+        #copy to remote
+        dst = self.location + 'SyncOrSwimDB'
+        copyfile(self.GlobalSettings.encryptedFolder + 'SyncOrSwimDB', dst)
+
+

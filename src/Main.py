@@ -63,7 +63,7 @@ if localSettingsExist and globalSettingsExist:
         inFile.close()
         outFile.close()
         #compare files
-        rootDirectory = database.pullRoots()
+        rootDirectory = lib.database.pullRoots()
 
     else:
         #local is newer, replace remote and upload files

@@ -376,20 +376,25 @@ class Ui_MainWindow(QtGui.QMainWindow):
                     sys.exit()
                 qDebug("MainWindow: returned from set encryption options: size = %s, unit = %s" % (size, unit))
                 #convert size and unit to bytes
-                if unit == 'Mb':
+                if unit == 'MB':
                     sizeBytes = int(size) * 1000000
                 else:
                     sizeBytes = int(size) * 1000000000
                 #generate settings file
                 key = Crypto.generateKey()
                 Settings.generateGlobalSettings(self.resourcesPath, sizeBytes, 10000000, key)
+                #this is a new remote, upload the local database to it
+                #NOTE: maybe generate new database here?
+                self.settings = Settings(self.resourcesPath)
+                remote = Remote(self.settings.remotePath, self.settings)
+                remote.uploadDatabase(self.resourcesPath)
         #Settings are now created, or proven to exist. Now load them into GUI:
         self.settings = Settings(self.resourcesPath)
         crypto = Crypto(self.settings)
         remote = Remote(self.settings.remotePath, self.settings)
 
         #init socket
-        self.watchman = Watchman(self.settings.rootPath, root, crypto, remote, self.settings)
+        self.watchman = Watchman(self.settings.rootPath, root, crypto, remote, self.settings, self.resourcesPath)
         self.watchman.subscribe()
 
 

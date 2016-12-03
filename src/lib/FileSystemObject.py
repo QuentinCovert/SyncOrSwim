@@ -46,13 +46,15 @@ class Directory(FileSystemObject):
         print(self.path)
 
     def retrieve(self, path):
+        if(path[0] != '/'):
+            path = '/' +path
         if(path == self.path):
             return self
         else:
             for file in self.files:
                 if(file.path == path):
                     return file
-                if(path.startswith(self.path)):
+                if(path.startswith(file.path) and isinstance(file, Directory)):
                     return file.retrieve(path)
             return False
 
