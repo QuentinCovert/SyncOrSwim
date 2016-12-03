@@ -1,6 +1,7 @@
 from lib.FileSystemObject import File, Directory
 from lib.remote import Remote
 from lib.Crypto import Crypto
+import lib.database as database
 import os
 
 
@@ -29,5 +30,14 @@ def localSync(rem, root, crypto):
         for file in files:
             localSync(file, root, crypto)
 
-def localSyncFinal(remote, crypto):
+def localSyncFinal(remote, crypto, root):
+    #remote is a Remote object 
+    #crypto is a Crypto module
+    #roo is the absolute path to the root on the local system
     
+    #download remote database
+    remote.downloadDatabase()
+    #pull root from database
+    rem = database.pullRoots()
+    #execute local sync funtionn
+    localSync(rem, root, local)
