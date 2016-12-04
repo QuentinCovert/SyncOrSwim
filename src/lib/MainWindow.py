@@ -123,7 +123,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
         if index != self.lastItemIgnoredComboBoxIndex:
             qDebug("Item ignored comboBox changed to index: %d" % index)
             if index == 0:
+                qDebug("User switched itemIgnoredComboBox to Yes.")
                 result = QtGui.QMessageBox.warning(self, 'Warning', "Ignored files/directories will not be synced to remote!", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+                qDebug("User selected: %d" % result)
                 if result == QtGui.QMessageBox.Ok:
                     database.deleteAndIgnore(self.clickedPath)
                 else:
