@@ -109,6 +109,7 @@ class Remote:
     def downloadDatabase(self, resourcesPath):
         #decrypt remote database
         myFernet = Fernet(self.GlobalSettings.key)
+        copyfile(self.GlobalSettings.remotePath + 'SyncOrSwimDB', self.GlobalSettings.encryptedFolder + 'SyncOrSwimDB')
         inFile = open(self.GlobalSettings.encryptedFolder + 'SyncOrSwimDB', 'rb')
         outFile = open(resourcesPath + 'SyncOrSwimDB.db', 'wb')
         outDataBin = base64.urlsafe_b64encode(inFile.read())
