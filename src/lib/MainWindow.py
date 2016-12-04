@@ -56,8 +56,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
     def getClickedFilePath(self, index):
         qDebug("User clicked: %s" % (self.clickedPath)
 
-        self.clickedPath = self.currFileSysModel.filePath(index))
-        relPath = getRelPathFromAbs(self.currFileSysModel.filePath(index)), self.settings.rootPath)
+        tmpPath = self.currFileSysModel.filePath(index)
+        self.clickedPath = tmpPath
+        relPath = getRelPathFromAbs(self.currFileSysModel.filePath(index), self.settings.rootPath)
 
         #Verify if relPath is an acutal path:
         if relPath is not False:
