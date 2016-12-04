@@ -162,6 +162,8 @@ def deleteAndIgnore(obj1):
         session.close()
         return True
     else:
+        if (obj1[0] != '/'):
+            obj1 = '/' + obj1
         obj = retrieve(obj1)
         if(obj != None):
             return deleteAndIgnore(obj)
