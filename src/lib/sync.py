@@ -47,6 +47,14 @@ def localSyncFinal(remote, crypto, rootPath):
         qDebug("localSyncFinal: ERROR, rem not a root directory!")
     #execute local sync funtion
     localSync(rem, rootPath, crypto, remote)
+    
+    #checks and removes deleted objects locally
+    d = database.retrieveDeletedObjects()
+    for file in d:
+        local = rootPath + file
+        if(os.path.exists(local)):
+            os.remove(local)
+        
 
 def setResourcePath(resourceP):
     global resourcePath
