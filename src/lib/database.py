@@ -167,7 +167,7 @@ def deleteAndIgnore(obj1):
             if(obj != None):
                 return deleteAndIgnore(obj)
         else:
-        return False
+            return False
 
 #stores file or directory and all subdirectories in database, if files are new they are added, otherwise they are just modified
 def store(obj1):
