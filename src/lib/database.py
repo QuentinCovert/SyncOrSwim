@@ -264,7 +264,7 @@ def retrieveIgnoredObjects():
 def deleteIgnoredObject(objPath):
     if isinstance(objPath, str):
         session = Session()
-        session.query(IgnoredObject).filter_by(ignoredObjPath=filePath).delete()
+        session.query(IgnoredObject).filter_by(ignoredObjPath=objPath).delete()
         session.commit()
         session.close()
         return True
