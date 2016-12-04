@@ -1,0 +1,21 @@
+Meeting:
+December 2, 2016
+
+Present:
+   Cameron
+   Quentin
+   Collin
+   Mark
+   Levi
+
+Description:
+    Meeting in Knoll study room. Reworked watchman module, cut tree module, continued integration and documentation. 
+
+Duration: 4 p.m. - 10 p.m. 6 hours
+
+Discussion:
+-  Cut FSOTreeGenerator module
+-  Added retrieve and store functionality to Directory objects
+-  Created busy loop
+-  Created sync module and functions
+-  Modified watchman module to use non-blocking sockets

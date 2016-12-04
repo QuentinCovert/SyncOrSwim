@@ -1,0 +1,20 @@
+Meeting:
+December 4, 2016
+
+Present:
+   Cameron
+   Quentin
+   Collin
+   Mark
+   Levi
+
+Description:
+    Meeting in Knoll study room. Continued integration testing, documentation, and final revisions of system
+
+Duration: 10 a.m. - 5 p.m. 6 hours
+
+Discussion:
+-  Added sync functionality, syncing between systems works.
+-  Cut ignored and deleted files functionality.
+-  Altered deleted file behavior.
+-  Fixed bugs, made final revisions.

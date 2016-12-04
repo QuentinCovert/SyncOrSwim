@@ -1,0 +1,21 @@
+Meeting:
+December 3, 2016
+
+Present:
+   Cameron
+   Quentin
+   Collin
+   Mark
+   Levi
+
+Description:
+    Meeting in Knoll study room. Continued integration and documentation
+
+Duration: 11 a.m. - 5 p.m. 6 hours
+
+Discussion:
+-  Finished settings
+-  Created new database entries for ignored and deleted files
+-  Finished watchman
+-  Integrated system together
+-  Started testing system and squashing bugs

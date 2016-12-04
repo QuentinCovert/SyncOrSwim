@@ -1,0 +1,19 @@
+Meeting:
+December 1, 2016
+
+Present:
+   Cameron
+   Quentin
+   Collin
+   Mark
+   Levi
+
+Description:
+    Meeting on Othmer Hall 2F. Began implementing all unfinished methods, integrating modules together, and writing documentation for final phase.
+    
+Duration: 5 p.m. - 10 p.m.  5 hours
+
+Discussion:
+-  Started documentation on the final phase
+-  Started innitialization and syncing
+-  Begin integrating the different modules into the GUI
