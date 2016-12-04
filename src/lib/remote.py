@@ -55,7 +55,8 @@ class Remote:
                 if os.path.isdir(self.location + fileSO.encryptedFilePath):
                     #it is a directory, download into folder in local encrypted folder
                     dst = encryptedFolder + fileSO.encryptedFilePath
-                    rmtree(dst)
+                    if os.path.isdir(dst):
+                        rmtree(dst)
                     copytree(self.location + fileSO.encryptedFilePath, dst)
                 else:
                     #single file, just copy
@@ -77,20 +78,19 @@ class Remote:
         #check if file or directory
         if isinstance(fileSO, File):
             #check if file is supposed to be encrypted
-            if fileSO.encryptionOn:
-                #the file is encrypted, copy from encrypted path to remote path
-                #check if folder or single encrypted file
-                if os.path.isdir(encryptedFolder + fileSO.encryptedFilePath):
-                    #its a directory, must delete whole thing
-                    shutil.rmtree(encryptedFolder + fileSO.encryptedFilePath)
-                else:
-                    #single file, just delete
-                    os.remove(encryptedFolder + fileSO.encryptedFilePath)
+            #the file is encrypted, copy from encrypted path to remote path
+            #check if folder or single encrypted file
+            if os.path.isdir(encryptedFolder + fileSO.encryptedFilePath):
+                #its a directory, must delete whole thing
+                shutil.rmtree(encryptedFolder + fileSO.encryptedFilePath)
+                shutil.rmtree(self.location + fileSO.encryptedFilePath)
             else:
-                #it's not supposed to be encrypted, so just delete from root
-                os.remove(rootPath + fileSO.path)
+                #single file, just delete
+                os.remove(encryptedFolder + fileSO.encryptedFilePath)
+                os.remove(self.location + fileSO.encryptedFilePath)
         elif isinstance(fileSO, Directory):
             shutil.rmtree(encryptedFolder + fileSO.path)
+            shutil.rmtree(self.location + fileSO.path)
 
     def uploadDatabase(self, resourcesPath):
         #encrypt local database

@@ -41,6 +41,9 @@ def localSyncFinal(remote, crypto, rootPath):
     remote.downloadDatabase(resourcePath)
     #pull root from database
     rem = database.pullRoots()
+    createSubDirs(rem, rootPath)
+    #iterate through database and make subdirectories
+
     if isinstance(rem, Directory):
         rem.printDirectory()
     else:
@@ -51,3 +54,13 @@ def localSyncFinal(remote, crypto, rootPath):
 def setResourcePath(resourceP):
     global resourcePath
     resourcePath = resourceP
+
+def createSubDirs(remote, rootPath):
+    for file in remote.files:
+        if isinstance(file, Directory):
+            #create directory and iterate again
+            try:
+                os.mkdir(rootPath + file.path[1:])
+            except Exception:
+                pass
+            createSubDirs(file, rootPath)

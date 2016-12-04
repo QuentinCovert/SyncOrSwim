@@ -60,7 +60,10 @@ class Crypto:
         if os.path.isfile(encryptedFolder + file.encryptedFilePath):
             # single encrypted file. Decrypt as normal
             inFile = open(encryptedFolder + file.encryptedFilePath, "rb")
-            outFile = open(rootPath + file.path, "wb")
+            if file.path[0] == '/':
+                outFile = open(rootPath + file.path[1:], "wb")
+            else:
+                outFile = open(rootPath + file.path, "wb")
             outDataBin = base64.urlsafe_b64encode(inFile.read())
             outData = self.fernet.decrypt(outDataBin)
             outFile.write(outData)

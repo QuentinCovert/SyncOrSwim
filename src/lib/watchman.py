@@ -126,7 +126,7 @@ class Watchman:
             qDebug("Entered read loop.")
             #parse the message and perform task
             readSock = read.pop()
-            data = readSock.recv(1024)
+            data = readSock.recv(16384)
             for line in data.splitlines():
                 print(line)
                 jsonObj = json.loads(line.decode("utf-8"))
@@ -178,8 +178,8 @@ class Watchman:
                         qDebug("Deleted file.")
                         #file was deleted
                         fileObject = self.rootDirectory.retrieve(name)
-                        lib.database.delete(fileObject)
                         self.remote.delete(fileObject)
+                        lib.database.delete(fileObject)
                     #database was updated, encrypt and reupload
                     self.remote.uploadDatabase(self.resourcesPath)
                 read, write, err = select.select(readList, [], [], 0)
