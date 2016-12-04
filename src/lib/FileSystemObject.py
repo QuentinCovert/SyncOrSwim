@@ -60,9 +60,12 @@ class Directory(FileSystemObject):
             return self
         else:
             for file in self.files:
+                p = file.path
+                if (p[-1:] != '/'):
+                    p = p + '/'
                 if(file.path == path):
                     return file
-                if(path.startswith(file.path) and isinstance(file, Directory)):
+                if(path.startswith(p) and isinstance(file, Directory)):
                     return file.retrieve(path)
             return False
 
@@ -78,6 +81,9 @@ class Directory(FileSystemObject):
              return None
         else:
             for file in self.files:
+                p = file.path
+                if (p[-1:] != '/'):
+                    p = p + '/'
                 if(file.path == fd.path):
                     file.lastModified = fd.lastModified
                     file.fileDeleted = fd.fileDeleted
@@ -85,7 +91,7 @@ class Directory(FileSystemObject):
                     file.lastSyncTime = fd.lastSyncTime
                     file.encryptedFilePath = fd.encryptedFilePath
                     return None
-                if(fd.path.startswith(file.path)):
+                if(fd.path.startswith(p) && isinstance(file, Directory)):
                     file.store(fd)
                     return None
             #if directory doesn't exist, create next directory and continues
