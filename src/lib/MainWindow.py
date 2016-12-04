@@ -115,6 +115,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
                                 tmpObj.encryptionOn = False
 
                             self.root.store(tmpObj)
+                            remote = Remote(self.settings.remotePath, self.settings)
+                            remote.uploadDatabase(self.resourcesPath)
             else:
                 qDebug("ERROR! Could not retrieve obj from relative path in tree!")
             self.lastEncryptEnableComboBoxIndex = index
@@ -128,6 +130,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 qDebug("User selected: %d" % result)
                 if result == QtGui.QMessageBox.Ok:
                     database.deleteAndIgnore(self.clickedPath)
+                    remote = Remote(self.settings.remotePath, self.settings)
+                    remote.uploadDatabase(self.resourcesPath)
                 else:
                     self.itemIgnoredComboBox.setCurrentIndex(1)
             self.lastItemIgnoredComboBoxIndex = index
