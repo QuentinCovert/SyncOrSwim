@@ -132,6 +132,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
                     database.deleteAndIgnore(self.clickedPath)
                     remote = Remote(self.settings.remotePath, self.settings)
                     remote.uploadDatabase(self.resourcesPath)
+                    self.watchman.unsubscribe(self.root.path,'sub1')
+                    self.watchman.subscribe(database.retrieveIgnoredObjects())
                 else:
                     self.itemIgnoredComboBox.setCurrentIndex(1)
             self.lastItemIgnoredComboBoxIndex = index
@@ -165,6 +167,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.rootLabel.setText(_translate("MainWindow", "Welcome to SyncOrSwim UI!", None))
         self.groupBox.setTitle(_translate("MainWindow", "Selection Info", None))
         self.rootOutputLabel.setText(_translate("MainWindow", "", None))
+
+        '''
         self.ignoredTitleLabel.setText(_translate("MainWindow", "Item Ignored:", None))
         self.itemIgnoredComboBox.setItemText(0, _translate("MainWindow", "Yes", None))
         self.itemIgnoredComboBox.setItemText(1, _translate("MainWindow", "No", None))
@@ -173,6 +177,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.encryptEnableComboBox.setItemText(0, _translate("MainWindow", "Yes", None))
         self.encryptEnableComboBox.setItemText(1, _translate("MainWindow", "No", None))
         self.encryptEnableComboBox.setItemText(2, _translate("MainWindow", "-", None))
+        '''
+
         self.lastUpatedTitleLabel.setText(_translate("MainWindow", "Last updated:", None))
         self.lastUpdatedOutput.setText(_translate("MainWindow", "", None))
         self.lastSyncedTitleLabel.setText(_translate("MainWindow", "Last Synced:", None))
@@ -289,6 +295,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.optionsLayout.setVerticalSpacing(70)
         self.optionsLayout.setObjectName(_fromUtf8("optionsLayout"))
         self.ignoredTitleLabel = QtGui.QLabel(self.groupBox)
+        '''
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)
@@ -321,6 +328,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.encryptEnableComboBox.activated.connect(self.encryptEnableComboBoxHandler)
         self.optionsLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.encryptEnableComboBox)
         self.lastUpatedTitleLabel = QtGui.QLabel(self.groupBox)
+        '''
         font = QtGui.QFont()
         font.setPointSize(12)
         font.setBold(True)

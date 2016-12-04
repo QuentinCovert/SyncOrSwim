@@ -80,16 +80,16 @@ class Watchman:
         else:
             return None
 
-    def subscribe(self):
+    def subscribe(self, ignored_files_list = None):
         # Watch anything that is a file (f) or directory (d) in this root directory
         expression = {'expression': ['allof', ['type', 'f']]}
 
         # Add ignored files to the filter
         # only if this is given
-        #if not (ignored_files_list is None):
-        #    ignore_expression = self.ignoredFilesToExpression(ignore_files_list)
-        #    if not (ignore_expression is None):
-        #        expression['expression'].append(ignore_expression)
+        if not (ignored_files_list is None):
+           ignore_expression = self.ignoredFilesToExpression(ignore_files_list)
+           if not (ignore_expression is None):
+               expression['expression'].append(ignore_expression)
 
         subRequest = ['subscribe', self.rootPath, 'sub1', expression]
 
@@ -184,4 +184,3 @@ class Watchman:
                     self.remote.uploadDatabase(self.resourcesPath)
                 read, write, err = select.select(readList, [], [], 0)
         qDebug("Exiting busy loop")
-
