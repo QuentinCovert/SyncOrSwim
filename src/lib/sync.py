@@ -27,17 +27,21 @@ def localSync(rem, root, crypto):
             remote.pull(rem)
             crypto.decrypt(rem)
     else:
-        for file in files:
+        for file in rem.files:
             localSync(file, root, crypto)
 
 def localSyncFinal(remote, crypto, root):
-    #remote is a Remote object 
+    #remote is a Remote object
     #crypto is a Crypto module
     #roo is the absolute path to the root on the local system
-    
+
     #download remote database
-    remote.downloadDatabase()
+    remote.downloadDatabase(resourcePath)
     #pull root from database
     rem = database.pullRoots()
     #execute local sync funtion
-    localSync(rem, root, local)
+    localSync(rem, root, crypto)
+
+def setResourcePath(resourceP):
+    global resourcePath
+    resourcePath = resourceP

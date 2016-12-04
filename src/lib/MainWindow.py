@@ -12,7 +12,6 @@ from lib.GetAccessKeyDialog import Ui_GetAccessKeyDialog as GetAccessKeyDialog
 import lib.database as database
 from lib.Settings import Settings
 #import lib.FSOTreeGenerator as FSOTreeObject
-from lib.FSOTreeGenerator import FSOTreeGenerator
 import lib.FileSystemObject as FileSystemObject
 from lib.Settings import Settings
 from lib.Crypto import Crypto
@@ -21,6 +20,9 @@ import socket
 import select
 from lib.watchman import Watchman
 from lib.remote import Remote
+import lib.sync
+from lib.GUIUtils import getRelPathFromAbs
+import datetime
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -44,6 +46,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.root = None
         self.currentPath = currentPath
         self.resourcesPath = resourcesPath
+        lib.sync.setResourcePath(resourcesPath)
         self.settings = None
         self.clickedPath = None
         self.localSettingsExist = localSettingsExist
@@ -54,15 +57,15 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 
     def getClickedFilePath(self, index):
-        qDebug("User clicked: %s" % (self.clickedPath)
-
         self.clickedPath = self.currFileSysModel.filePath(index)
+        qDebug("User clicked: %s" % (self.clickedPath))
         relPath = getRelPathFromAbs(self.currFileSysModel.filePath(index), self.settings.rootPath)
+        qDebug("getClickedFilePath: relative path returned is = %s" % relPath)
 
         #Verify if relPath is an acutal path:
         if relPath is not False:
             self.clickedPath = relPath
-            if isIgnored(self.clickedPath):
+            if database.isIgnored(self.clickedPath):
                 #Set GUI to display that the obj is ignored.
                 self.encryptEnableComboBox.setCurrentIndex(2)   #-
                 self.itemIgnoredComboBox.setCurrentIndex(0) #Yes
@@ -70,58 +73,62 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 self.lastSyncedOutput.setText(_translate("MainWindow", "---------", None))
             else:
                 #Pull the obj's settings and display them.
-                obj = self.tree.retrieve(self.clickedPath)
+                obj = self.root.retrieve(self.clickedPath)
                 self.itemIgnoredComboBox.setCurrentIndex(1) #No
                 if obj.encryptionOn:
                     self.encryptEnableComboBox.setCurrentIndex(0)
                 else:
                     self.encryptEnableComboBox.setCurrentIndex(1)
-                self.lastUpdatedOutput.setText(_translate("MainWindow", obj.lastModified, None))
-                self.lastSyncedOutput.setText(_translate("MainWindow", obj.lastSyncTime, None))
+                self.lastUpdatedOutput.setText(obj.lastModified.isoformat(' '))
+                self.lastSyncedOutput.setText(obj.lastSyncTime.isoformat(' '))
         else:
             qDebug("ERROR in getting relative path!")
 
     def encryptEnableComboBoxHandler(self, index):
-        qDebug("Encrypt enable comboBox changed to index: %d" % index)
-        relPath = getRelPathFromAbs(self.clickedPath, self.settings.rootPath)
+        if index != self.lastEncryptEnableComboBoxIndex:
+            qDebug("Encrypt enable comboBox changed to index: %d" % index)
+            relPath = getRelPathFromAbs(self.clickedPath, self.settings.rootPath)
 
-        if relPath is not False:
-            if isIgnored(relPath):
-                self.encryptEnableComboBox.setCurrentIndex(2)
+            if relPath is not False:
+                if database.isIgnored(relPath):
+                    self.encryptEnableComboBox.setCurrentIndex(2)
+                else:
+                    qDebug("Relative path of file to en/decrypt is: %s" % relPath)
+                    tmpObj = self.root.retrieve(relPath)
+                    #Verify retrievely succeeded:
+                    if tmpObj is not False:
+                        #See if it's a file or directory obj:
+                        if isinstance(tmpObj, Directory):
+                            if index == 0:
+                                #Need to set encryption to on:
+                                tmpObj.setEncrypt(True)
+                            else:
+                                #Nee to set encryption to off:
+                                tmpObj.setEncrypt(False)
+                        else:
+                            #It's a file type
+                            if index == 0:
+                                #Need to set encryption to on:
+                                tmpObj.encryptionOn = True
+                            else:
+                                #Nee to set encryption to off:
+                                tmpObj.encryptionOn = False
+
+                            self.root.store(tmpObj)
             else:
-                qDebug("Relative path of file to en/decrypt is: %s" % relPath)
-                tmpObj = self.tree.retrieve(relPath)
-                #Verify retrievely succeeded:
-                if tmpObj is not False:
-                    #See if it's a file or directory obj:
-                    if isinstance(tmpObj, Directory):
-                        if index == 0:
-                            #Need to set encryption to on:
-                            tmpObj.setEncrypt(True)
-                        else:
-                            #Nee to set encryption to off:
-                            tmpObj.setEncrypt(False)
-                    else:
-                        #It's a file type
-                        if index == 0:
-                            #Need to set encryption to on:
-                            tmpObj.encryptionOn = True
-                        else:
-                            #Nee to set encryption to off:
-                            tmpObj.encryptionOn = False
-
-                        self.tree.store(tmpObj)
-        else:
-            qDebug("ERROR! Could not retrieve obj from relative path in tree!")
+                qDebug("ERROR! Could not retrieve obj from relative path in tree!")
+            self.lastEncryptEnableComboBoxIndex = index
 
     def itemIgnoredComboBoxHandler(self, index):
-        qDebug("Item ignored comboBox changed to index: %d" % index)
-        if index == 0:
-            result = QtGui.QMessageBox.warning(self, 'Warning', "Ignored files/directories will not be synced to remote!", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
-            if result == QtGui.QMessageBox.Ok:
-                deleteAndIgnore(self.clickedPath)
-            else:
-                self.itemIgnoredComboBox.setCurrentIndex(1)
+        if index != self.lastItemIgnoredComboBoxIndex:
+            qDebug("Item ignored comboBox changed to index: %d" % index)
+            if index == 0:
+                result = QtGui.QMessageBox.warning(self, 'Warning', "Ignored files/directories will not be synced to remote!", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+                if result == QtGui.QMessageBox.Ok:
+                    database.deleteAndIgnore(self.clickedPath)
+                else:
+                    self.itemIgnoredComboBox.setCurrentIndex(1)
+            self.lastItemIgnoredComboBoxIndex = index
 
     def setupUi(self, MainWindow):
 
@@ -288,7 +295,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.itemIgnoredComboBox.addItem(_fromUtf8(""))
         self.itemIgnoredComboBox.addItem(_fromUtf8(""))
         self.itemIgnoredComboBox.addItem(_fromUtf8(""))
-        self.itemIgnoredComboBox.currentIndexChanged.connect(self.itemIgnoredComboBoxHandler)
+        self.itemIgnoredComboBox.activated.connect(self.itemIgnoredComboBoxHandler)
+        self.lastItemIgnoredComboBoxIndex = 2
         self.optionsLayout.setWidget(0, QtGui.QFormLayout.FieldRole, self.itemIgnoredComboBox)
         self.encryptEnableTitleLabel = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
@@ -303,7 +311,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.encryptEnableComboBox.addItem(_fromUtf8(""))
         self.encryptEnableComboBox.addItem(_fromUtf8(""))
         self.encryptEnableComboBox.addItem(_fromUtf8(""))
-        self.encryptEnableComboBox.currentIndexChanged.connect(self.encryptEnableComboBoxHandler)
+        self.lastEncryptEnableComboBoxIndex = 2
+        self.encryptEnableComboBox.activated.connect(self.encryptEnableComboBoxHandler)
         self.optionsLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.encryptEnableComboBox)
         self.lastUpatedTitleLabel = QtGui.QLabel(self.groupBox)
         font = QtGui.QFont()
@@ -436,8 +445,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 dst = self.resourcesPath + "global_settings.p"
                 copyfile(accessKeyPath, dst)
                 #TODO: get database and shit
-                #TODO: download files from remote
-
+                #TODO: dowgetRelPathFromAbs "" and unit is "":
             else:
                 size, unit = GenerateAccessKeyDialog.openDialog("", "", self)
                 if size is "" and unit is "":
@@ -460,9 +468,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.settings = Settings(self.resourcesPath)
         crypto = Crypto(self.settings)
         remote = Remote(self.settings.remotePath, self.settings)
-        sync.localSyncFinal(remote, crypto, self.settings.rootPath)
+        lib.sync.localSyncFinal(remote, crypto, self.settings.rootPath)
         #init socket
-        self.watchman = Watchman(self.settings.rootPath, root, crypto, remote, self.settings, self.resourcesPath)
+        self.watchman = Watchman(self.settings.rootPath, self.root, crypto, remote, self.settings, self.resourcesPath)
         self.watchman.subscribe()
 
 

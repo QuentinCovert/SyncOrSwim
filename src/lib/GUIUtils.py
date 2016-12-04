@@ -4,6 +4,7 @@
 from PyQt4 import QtCore
 from PyQt4.QtCore import QFileInfo
 from PyQt4.QtCore import qDebug
+import os
 
 def isFilePathValid(path):
     fileInfo = QFileInfo(path)
@@ -32,15 +33,6 @@ def isInt(s):
     except ValueError:
         return False
 
-def getRelPathFromAbs(relPath, absPath):
-    index = 0
-    if absPath.startswith(relPath):
-        for char in absPath:
-            if char is relPath[index]:
-                index++
-            else:
-                break
-
-        return absPath[index:len(absPath)]
-    else:
-        return False
+def getRelPathFromAbs(filePath, rootPath):
+    qDebug('Root path: ' + rootPath + '\nfilePath: ' + filePath)
+    return os.path.relpath(filePath, rootPath)

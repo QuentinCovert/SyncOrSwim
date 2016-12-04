@@ -229,14 +229,14 @@ def checkMod(checkList):
 
 
 class IgnoredObject(Base):
-    __tablename__ = 'ignored_files'
+    __tablename__ = 'ignored_objects'
     ignoredObjPath = Column(String, primary_key=True)
 
     def __init__(self, arg):
         self.ignoredObjPath = arg
 
 class DeletedObject(Base):
-    __tablename__ = 'deleted_files'
+    __tablename__ = 'deleted_objects'
     deletedObjPath = Column(String, primary_key=True)
 
     def __init__(self, arg):

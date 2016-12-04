@@ -91,7 +91,7 @@ class Remote:
                 os.remove(rootPath + fileSO.path)
         elif isinstance(fileSO, Directory):
             shutil.rmtree(encryptedFolder + fileSO.path)
-            
+
     def uploadDatabase(self, resourcesPath):
         #encrypt local database
         myFernet = Fernet(self.GlobalSettings.key)
@@ -109,11 +109,12 @@ class Remote:
     def downloadDatabase(self, resourcesPath):
         #decrypt remote database
         myFernet = Fernet(self.GlobalSettings.key)
-        inFile = open(self.GlobalSettings.encryptedFolder + 'SyncOrSwimDB', 'wb')
-        outFile = open(resourcesPath + 'SyncOrSwimDB.db', 'rb')
-        outData = myFernet.decrypt(inFile.read())
-        outDataBin = base64.urlsafe_b64decode(outData)
-        outFile.write(outDataBin)
+        inFile = open(self.GlobalSettings.encryptedFolder + 'SyncOrSwimDB', 'rb')
+        outFile = open(resourcesPath + 'SyncOrSwimDB.db', 'wb')
+        outDataBin = base64.urlsafe_b64encode(inFile.read())
+        outData = myFernet.decrypt(outDataBin)
+
+        outFile.write(outData)
         inFile.close()
         outFile.close()
 
