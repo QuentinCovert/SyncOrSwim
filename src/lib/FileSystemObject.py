@@ -91,7 +91,7 @@ class Directory(FileSystemObject):
                     file.lastSyncTime = fd.lastSyncTime
                     file.encryptedFilePath = fd.encryptedFilePath
                     return None
-                if(fd.path.startswith(p) && isinstance(file, Directory)):
+                if(fd.path.startswith(p) and isinstance(file, Directory)):
                     file.store(fd)
                     return None
             #if directory doesn't exist, create next directory and continues
