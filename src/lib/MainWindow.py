@@ -54,8 +54,32 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
 
     def getClickedFilePath(self, index):
-        self.clickedPath = self.currFileSysModel.filePath(index))
         qDebug("User clicked: %s" % (self.clickedPath)
+
+        self.clickedPath = self.currFileSysModel.filePath(index))
+        relPath = getRelPathFromAbs(self.currFileSysModel.filePath(index)), self.settings.rootPath)
+
+        #Verify if relPath is an acutal path:
+        if relPath is not False:
+            self.clickedPath = relPath
+            if isIgnored(self.clickedPath):
+                #Set GUI to display that the obj is ignored.
+                self.encryptEnableComboBox.setCurrentIndex(2)   #-
+                self.itemIgnoredComboBox.setCurrentIndex(0) #Yes
+                self.lastUpdatedOutput.setText(_translate("MainWindow", "---------", None))
+                self.lastSyncedOutput.setText(_translate("MainWindow", "---------", None))
+            else:
+                #Pull the obj's settings and display them.
+                obj = self.tree.retrieve(self.clickedPath)
+                self.itemIgnoredComboBox.setCurrentIndex(1) #No
+                if obj.encryptionOn:
+                    self.encryptEnableComboBox.setCurrentIndex(0)
+                else:
+                    self.encryptEnableComboBox.setCurrentIndex(1)
+                self.lastUpdatedOutput.setText(_translate("MainWindow", obj.lastModified, None))
+                self.lastSyncedOutput.setText(_translate("MainWindow", obj.lastSyncTime, None))
+        else:
+            qDebug("ERROR in getting relative path!")
 
     def encryptEnableComboBoxHandler(self, index):
         qDebug("Encrypt enable comboBox changed to index: %d" % index)
@@ -72,10 +96,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 if isinstance(tmpObj, Directory):
                     if index == 0:
                         #Need to set encryption to on:
-                        tmpObj.encryptionOn = True
+                        tmpObj.setEncrypt(True)
                     else:
                         #Nee to set encryption to off:
-                        tmpObj.encryptionOn = False
+                        tmpObj.setEncrypt(False)
                 else:
                     #It's a file type
                     if index == 0:
@@ -91,6 +115,12 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def itemIgnoredComboBoxHandler(self, index):
         qDebug("Item ignored comboBox changed to index: %d" % index)
+        if index == 0:
+            result = QtGui.QMessageBox.warning(self, 'Warning', "Ignored files/directories will not be synced to remote!", QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel)
+            if result == QtGui.QMessageBox.Ok:
+                deleteAndIgnore(self.clickedPath)
+            else:
+                self.itemIgnoredComboBox.setCurrentIndex(1)
 
     def setupUi(self, MainWindow):
 
@@ -124,14 +154,15 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.ignoredTitleLabel.setText(_translate("MainWindow", "Item Ignored:", None))
         self.itemIgnoredComboBox.setItemText(0, _translate("MainWindow", "Yes", None))
         self.itemIgnoredComboBox.setItemText(1, _translate("MainWindow", "No", None))
+        self.itemIgnoredComboBox.setItemText(2, _translate("MainWindow", "-", None))
         self.encryptEnableTitleLabel.setText(_translate("MainWindow", "Auto-Encrypt Enabled:", None))
         self.encryptEnableComboBox.setItemText(0, _translate("MainWindow", "Yes", None))
         self.encryptEnableComboBox.setItemText(1, _translate("MainWindow", "No", None))
         self.encryptEnableComboBox.setItemText(2, _translate("MainWindow", "-", None))
         self.lastUpatedTitleLabel.setText(_translate("MainWindow", "Last updated:", None))
-        self.lastUpdatedOutput.setText(_translate("MainWindow", "11/11/2016", None))
+        self.lastUpdatedOutput.setText(_translate("MainWindow", "", None))
         self.lastSyncedTitleLabel.setText(_translate("MainWindow", "Last Synced:", None))
-        self.lastSyncedOutput.setText(_translate("MainWindow", "11/11/2016", None))
+        self.lastSyncedOutput.setText(_translate("MainWindow", "", None))
 
         '''
         self.menuFile.setTitle(_translate("MainWindow", "File", None))
@@ -148,6 +179,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.actionExit.setText(_translate("MainWindow", "Exit", None))
         '''
 
+        self.encryptEnableComboBox.setCurrentIndex(2)
+        self.itemIgnoredComboBox.setCurrentIndex(2)
         self.currFileSysModel = QtGui.QFileSystemModel(self)
         self.currFileSysModel.setFilter(QDir.AllEntries | QDir.NoDotAndDotDot | QDir.AllDirs)
         self.currFileSysModel.setRootPath(self.settings.rootPath)
@@ -251,6 +284,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.optionsLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.ignoredTitleLabel)
         self.itemIgnoredComboBox = QtGui.QComboBox(self.groupBox)
         self.itemIgnoredComboBox.setObjectName(_fromUtf8("itemIgnoredComboBox"))
+        self.itemIgnoredComboBox.addItem(_fromUtf8(""))
         self.itemIgnoredComboBox.addItem(_fromUtf8(""))
         self.itemIgnoredComboBox.addItem(_fromUtf8(""))
         self.itemIgnoredComboBox.currentIndexChanged.connect(self.itemIgnoredComboBoxHandler)
@@ -402,7 +436,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
                 copyfile(accessKeyPath, dst)
                 #TODO: get database and shit
                 #TODO: download files from remote
-                
+
             else:
                 size, unit = GenerateAccessKeyDialog.openDialog("", "", self)
                 if size is "" and unit is "":
@@ -425,7 +459,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.settings = Settings(self.resourcesPath)
         crypto = Crypto(self.settings)
         remote = Remote(self.settings.remotePath, self.settings)
-        sync.localSyncFinal(remote, crypto, self.settings.rootPath) 
+        sync.localSyncFinal(remote, crypto, self.settings.rootPath)
         #init socket
         self.watchman = Watchman(self.settings.rootPath, root, crypto, remote, self.settings, self.resourcesPath)
         self.watchman.subscribe()

@@ -130,7 +130,25 @@ def fastRetrieve(path):
 #deletes file or directory and all subdirectories from database
 def delete(obj1):
     if((type(obj1) is File) or (type(obj1) is Directory)):
-        storeIgnoredFile(obj1.path)
+        storeDeletedObj(obj1.path)
+        session = Session()
+        path1 = obj1.path
+        if(type(obj1) is Directory):
+            for fd in obj1.files:
+                delete(fd)
+            session.query(DirectoryObject).filter_by(path=path1).delete()
+        if(type(obj1) is File):
+            session.query(FileObject).filter_by(path=path1).delete()
+        session.commit()
+        session.close()
+        return True
+    else:
+        return False
+
+#deletes file or directory and all subdirectories from database and marks them as ignored.
+def deleteAndIgnore(obj1):
+    if((type(obj1) is File) or (type(obj1) is Directory)):
+        storeIgnoredObj(obj1.path)
         session = Session()
         path1 = obj1.path
         if(type(obj1) is Directory):
@@ -210,54 +228,54 @@ def checkMod(checkList):
 	return outOfSync
 
 
-class IgnoredFileObject(Base):
+class IgnoredObject(Base):
     __tablename__ = 'ignored_files'
-    ignoredFilePath = Column(String, primary_key=True)
+    ignoredObjPath = Column(String, primary_key=True)
 
     def __init__(self, arg):
-        self.ignoredFilePath = arg
+        self.ignoredObjPath = arg
 
-class DeletedFileObject(Base):
+class DeletedObject(Base):
     __tablename__ = 'deleted_files'
-    deletedFilePath = Column(String, primary_key=True)
+    deletedObjPath = Column(String, primary_key=True)
 
     def __init__(self, arg):
-        self.deletedFilePath = arg
+        self.deletedObjPath = arg
 
 #Checks to see if given path is in the ignored list:
 def isIgnored(path):
-    list = retrieveIgnoredFiles()
+    list = retrieveIgnoredObjects()
     if path in list:
         return True
     else:
         return False
-        
+
 #Get a list of relative paths of all files to be ignored by the system.
-def retrieveIgnoredFiles():
+def retrieveIgnoredObjects():
     session = Session()
-    ignoredFileList = session.query(IgnoredFilesObject).all()
+    ignoredList = session.query(IgnoredObject).all()
     session.close()
     retList = []
-    for ignoredFileObj in ignoredFileList:
-        reList.append(ignoredFileObj.ignoredFilePath)
+    for ignoredObj in ignoredList:
+        reList.append(ignoredObj.ignoredObjPath)
     return retList
 
-#Removes an ignored filePath from the database. This would be used when the user chooses to no longer ignore a file.
-def deleteIgnoredFile(filePath):
-    if isinstance(filePath, str):
+#Removes an ignored path from the database. This would be used when the user chooses to no longer ignore a file.
+def deleteIgnoredObject(objPath):
+    if isinstance(objPath, str):
         session = Session()
-        session.query(IgnoredFilesObject).filter_by(ignoredFilePath=filePath).delete()
+        session.query(IgnoredObject).filter_by(ignoredObjPath=filePath).delete()
         session.commit()
         session.close()
         return True
     else:
         return False
 
-#This adds an ignored filePath to the db. This would be used when the user chooses to ignore a file.
-def storeIgnoredFile(filePath):
-    if isinstance(filePath, str):
+#This adds an ignored path to the db. This would be used when the user chooses to ignore a file.
+def storeIgnoredObj(objPath):
+    if isinstance(objPath, str):
         session = Session()
-        obj = IgnoredFileObject(filePath)
+        obj = IgnoredObject(objPath)
         session.merge(obj)
         session.commit()
         session.close()
@@ -266,20 +284,20 @@ def storeIgnoredFile(filePath):
         return False
 
 #Get a list of relative paths of all files to be deleted by the system, if they exist.
-def retrieveDeletedFiles():
+def retrieveDeletedObjects():
     session = Session()
-    deletedFileList = session.query(DeletedFileObject).all()
+    deletedObjList = session.query(DeletedObject).all()
     session.close()
     retList = []
-    for deletedFileObj in deletedFileList:
-        reList.append(deletedFileObj.deletedFilePath)
+    for deletedObj in deletedObjList:
+        reList.append(deletedObj.deletedObjPath)
     return retList
 
 #Removes an deleted filePath from the database. This would be used when the user chooses to add a file which was deleted.
-def deleteDeletedFile(filePath):
+def deleteDeletedObj(filePath):
     if isinstance(filePath, str):
         session = Session()
-        session.query(DeletedFileObject).filter_by(deletedFilePath=filePath).delete()
+        session.query(DeletedObject).filter_by(deletedObjPath=filePath).delete()
         session.commit()
         session.close()
         return True
@@ -287,10 +305,10 @@ def deleteDeletedFile(filePath):
         return False
 
 #This adds an deleted filePath to the db. This would be used when the user chooses to delete a file that's in the root.
-def storeDeletedFile(filePath):
+def storeDeletedObj(filePath):
     if isinstance(filePath, str):
         session = Session()
-        obj = DeletedFileObject(filePath)
+        obj = DeletedObject(filePath)
         session.merge(obj)
         session.commit()
         session.close()
