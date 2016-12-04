@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import os
+from PyQt4.QtCore import qDebug
+
 class FileSystemObject(metaclass=ABCMeta):
 
     __metaclass__ = ABCMeta
@@ -23,8 +25,7 @@ class File(FileSystemObject):
 
 
     def printFile(self):
-        print("File:")
-        print(self.path)
+        qDebug("File: %s" % self.path)
 
 class Directory(FileSystemObject):
 
@@ -42,9 +43,8 @@ class Directory(FileSystemObject):
         self.files.append(file)
 
     def printDirectoryNoChildren(self):
-        print("Directory:")
-        print(self.path)
-        
+        qDebug("Directory: %s" % self.path)
+
     def setEncrypt(e):
         self.encryptionOn = e
         for file in self.files:
@@ -118,13 +118,9 @@ class Directory(FileSystemObject):
 
 
     def printDirectory(self):
-        print("Directory:")
-        print(self.path)
+        qDebug("Directory: %s" % self.path)
         for file in self.files:
             if(isinstance(file, File)):
-                print("File:")
                 file.printFile()
             elif(isinstance(file, Directory)):
-                print("Directory:")
                 file.printDirectory()
-
