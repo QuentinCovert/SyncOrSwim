@@ -21,6 +21,7 @@ In order to utilize ZenHub, we primarily work/contribute to this git repository 
   "sockname": "/path/to/the/sock"
 }
 ```
+  * If you do not have root permission to install Watchman, see the [additional information for Watchman installation](additional-info-watchman-installation.md).
 
 **Note**: Currently, this program is only supported and tested on Linux.
 
@@ -32,13 +33,13 @@ This is **not** a replacement for a version control system. This program is conc
 
 ## Repository Structure
 - Diagrams
-  - Figures showing use cases, class diagrams, or sequence diagrams
+  - Figures showing use cases, class diagrams, or sequence diagrams.
 - Docs
-  - Documents of the project
+  - Documents of the project.
 - Minutes
   - Summaries of meetings (virtual or physical), including date, length, and attendance.
 - Src
-  - Location of source code for the program. Each module will be under their own subdirectory under this directory.
+  - Location of source code for the program. `src/Main.py` will pull in the functionality from various modules in the `src/lib` directory. 
 
 ## Contributing
 1. Clone repo to local computer using `git clone`.
