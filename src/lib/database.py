@@ -147,7 +147,7 @@ def delete(obj1):
 
 #deletes file or directory and all subdirectories from database and marks them as ignored.
 def deleteAndIgnore(obj1):
-    if((type(obj1) is File) or (type(obj1) is Directory)):
+    if(isinstance(obj1, File) or isinstance(obj1, Directory)):
         storeIgnoredObj(obj1.path)
         session = Session()
         path1 = obj1.path
@@ -162,12 +162,10 @@ def deleteAndIgnore(obj1):
         session.close()
         return True
     else:
-        if((type(obj1) is String)):
-            obj = retrieve(obj1)
-            if(obj != None):
-                return deleteAndIgnore(obj)
-        else:
-            return False
+        obj = retrieve(obj1)
+        if(obj != None):
+            return deleteAndIgnore(obj)
+        return False
 
 #stores file or directory and all subdirectories in database, if files are new they are added, otherwise they are just modified
 def store(obj1):
