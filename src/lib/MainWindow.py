@@ -56,8 +56,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
     def getClickedFilePath(self, index):
         qDebug("User clicked: %s" % (self.clickedPath)
 
-        tmpPath = self.currFileSysModel.filePath(index)
-        self.clickedPath = tmpPath
+        self.clickedPath = self.currFileSysModel.filePath(index)
         relPath = getRelPathFromAbs(self.currFileSysModel.filePath(index), self.settings.rootPath)
 
         #Verify if relPath is an acutal path:
@@ -86,31 +85,32 @@ class Ui_MainWindow(QtGui.QMainWindow):
         qDebug("Encrypt enable comboBox changed to index: %d" % index)
         relPath = getRelPathFromAbs(self.clickedPath, self.settings.rootPath)
 
-        if isIgnored(relPath):
-            self.encryptEnableComboBox.setCurrentIndex(2)
-        else:
-            qDebug("Relative path of file to en/decrypt is: %s" % relPath)
-            tmpObj = self.tree.retrieve(relPath)
-            #Verify retrievely succeeded:
-            if tmpObj is not False:
-                #See if it's a file or directory obj:
-                if isinstance(tmpObj, Directory):
-                    if index == 0:
-                        #Need to set encryption to on:
-                        tmpObj.setEncrypt(True)
+        if relPath is not False:
+            if isIgnored(relPath):
+                self.encryptEnableComboBox.setCurrentIndex(2)
+            else:
+                qDebug("Relative path of file to en/decrypt is: %s" % relPath)
+                tmpObj = self.tree.retrieve(relPath)
+                #Verify retrievely succeeded:
+                if tmpObj is not False:
+                    #See if it's a file or directory obj:
+                    if isinstance(tmpObj, Directory):
+                        if index == 0:
+                            #Need to set encryption to on:
+                            tmpObj.setEncrypt(True)
+                        else:
+                            #Nee to set encryption to off:
+                            tmpObj.setEncrypt(False)
                     else:
-                        #Nee to set encryption to off:
-                        tmpObj.setEncrypt(False)
-                else:
-                    #It's a file type
-                    if index == 0:
-                        #Need to set encryption to on:
-                        tmpObj.encryptionOn = True
-                    else:
-                        #Nee to set encryption to off:
-                        tmpObj.encryptionOn = False
+                        #It's a file type
+                        if index == 0:
+                            #Need to set encryption to on:
+                            tmpObj.encryptionOn = True
+                        else:
+                            #Nee to set encryption to off:
+                            tmpObj.encryptionOn = False
 
-                    self.tree.store(tmpObj)
+                        self.tree.store(tmpObj)
         else:
             qDebug("ERROR! Could not retrieve obj from relative path in tree!")
 
