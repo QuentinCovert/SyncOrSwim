@@ -161,6 +161,10 @@ def deleteAndIgnore(obj1):
         session.close()
         return True
     else:
+        if((type(obj1) is String)):
+            obj = retrieve(ob1)
+            return deleteAndIgnore(obj1)
+        else:
         return False
 
 #stores file or directory and all subdirectories in database, if files are new they are added, otherwise they are just modified
