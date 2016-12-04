@@ -107,6 +107,8 @@ class Directory(FileSystemObject):
             else:                            #create another subdirectory
                 #print("insert subdirectories")
                 path = self.path + "/" + rel.split('/')[0]
+                if((path[0] == '/') and (path[1] =='/')):
+                    path = path[1:]
                 #print("self.path: " + self.path)
                 #print(rel.split('/'))
                 #print(path)
