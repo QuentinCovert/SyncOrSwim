@@ -153,6 +153,7 @@ def deleteAndIgnore(obj1):
         path1 = obj1.path
         if(type(obj1) is Directory):
             for fd in obj1.files:
+                #should you just delete them, or add them to the ignored list as well?
                 delete(fd)
             session.query(DirectoryObject).filter_by(path=path1).delete()
         if(type(obj1) is File):
@@ -162,8 +163,9 @@ def deleteAndIgnore(obj1):
         return True
     else:
         if((type(obj1) is String)):
-            obj = retrieve(ob1)
-            return deleteAndIgnore(obj1)
+            obj = retrieve(obj1)
+            if(obj != None):
+                return deleteAndIgnore(obj)
         else:
         return False
 
