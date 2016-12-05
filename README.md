@@ -9,7 +9,7 @@ We will be using the Chrome extension ZenHub to create and manage issue tracking
 In order to utilize ZenHub, we primarily work/contribute to this git repository on GitHub at [QuentinCovert/SyncOrSwim](https://github.com/QuentinCovert/SyncOrSwim).
 
 ## Installation
-1. Unzip the SyncOrSwim folder, available at (blah).
+1. Unzip the SyncOrSwim folder, available at the github releases page.
 2. Install SQLAlchemy 3.4, PyQt4, and Watchman. This uses Python 3.4.1. These can be found at the following links:
   * http://www.sqlalchemy.org/download.html
   * https://sourceforge.net/projects/pyqt/
@@ -26,7 +26,7 @@ In order to utilize ZenHub, we primarily work/contribute to this git repository 
 **Note**: Currently, this program is only supported and tested on Linux.
 
 ## Usage
-1. Using Python 3.4.1, execute the Main module with the following command: path/to/src/Main.py
+1. Using Python 3.4.1, execute the Main module with the following command: path/to/python3.4 path/to/src/Main.py
 2. Follow the on-screen instructions to begin syncing files.
 
 This is **not** a replacement for a version control system. This program is concerned with the most recent version of the root directory. 
