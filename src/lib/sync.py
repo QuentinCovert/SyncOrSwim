@@ -17,7 +17,7 @@ def localSync(rem, rootPath, crypto, remote):
             ltime = os.path.getmtime(local)
             rtime = rem.lastModified.timestamp()
             if(ltime > rtime): #if the file exists locally and the mofified time is newer for the local file
-                print("eat shit cameron")
+                #print("eat shit cameron")
             else:
                 if(rem.fileDeleted):
                     os.remove(local)
